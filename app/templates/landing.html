@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Ghost-Typer Home{% endblock %}
+
+{% block content %}
+<h1>Documentation Automation</h1>
+<p>Select an automation mode below:</p>
+
+<div class="tools-grid">
+    <!-- Live Editor Mode -->
+    <a href="/live-mode" class="tool-card">
+        <div class="tool-title">Live Editor</div>
+    </a>
+
+    <!-- Upload Mode -->
+    <a href="/upload-mode" class="tool-card">
+        <div class="tool-title">Upload File</div>
+    </a>
+
+    <!-- Repository Mode -->
+    <a href="/repo-mode" class="tool-card">
+        <div class="tool-title">Repository Mode</div>
+    </a>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<!-- Override the sidebar block to leave it empty on the landing page -->
+{% endblock %}

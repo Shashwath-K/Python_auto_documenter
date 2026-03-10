@@ -1,0 +1,520 @@
+{% extends "base.html" %}
+
+{% block title %}Live Editor - Ghost-Typer{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/components/editor.css">
+{% endblock %}
+
+{% block content %}
+<a href="/" class="back-link">Back to Home</a>
+<h1>Live Generation Editor</h1>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div class="status" id="serverStatus">Editor Ready</div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <select id="docLevelSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                <option value="minimum">Docs: Classes & Functions</option>
+                <option value="medium" selected>Docs: Medium Density</option>
+                <option value="maximum">Docs: Line-by-Line</option>
+            </select>
+            <select id="langSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;"
+                onchange="updateEditorLanguage()">
+                <option value="python" selected>Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="typescript">TypeScript (.ts)</option>
+                <option value="jsx">React (.jsx / .tsx)</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="cpp">C / C++</option>
+                <option value="java">Java</option>
+                <option value="markdown">Markdown</option>
+                <option value="plaintext">Text</option>
+            </select>
+            <button id="pauseBtn" onclick="togglePause()" class="btn-run btn-run-visible"
+                style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">Pause
+                Auto-Doc</button>
+            <button id="runCodeBtn" onclick="runCode()" class="btn-run btn-run-visible">Run Code</button>
+            <div id="genDocGroup"
+                style="display: none; gap: 0.5rem; border-left: 1px solid var(--border-color); padding-left: 1rem; margin-left: 0.5rem; align-items: center;">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);">Advanced
+                    Options:</span>
+                <select id="docTemplateSelect" class="modal-input"
+                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                    <option value="Classic">Classic Template</option>
+                    <option value="Modern">Modern Template</option>
+                    <option value="Executive">Executive</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Creative">Creative</option>
+                    <option value="Minimalist">Minimalist</option>
+                </select>
+                <select id="docFormatSelect" class="modal-input"
+                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                    <option value="PDF">PDF</option>
+                    <option value="DOCX">DOCX</option>
+                </select>
+                <button id="genDocBtn" onclick="generateDocument()" class="btn-run btn-run-visible"
+                    style="background-color: var(--success); padding: 0.5rem 1rem;">Download</button>
+            </div>
+        </div>
+    </div>
+    <p style="margin-top: 0;">Type your Python code below. When you pause typing, the system will automatically analyze
+        what you wrote and generate docstrings.</p>
+    <div id="editorContainer" class="editor-container editor-container-visible">
+    </div>
+</div>
+
+<div class="card terminal-container" style="display: block;">
+    <h3>Terminal Output</h3>
+    <pre id="terminalOutput" class="terminal-output">Ready...</pre>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Load Monaco Editor via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs/loader.min.js"></script>
+<script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' } });
+    let editor;
+    let typingTimer;
+    const doneTypingInterval = 15000;  // 15 seconds
+    let isGenerating = false;
+    let isPaused = false;
+
+    function togglePause() {
+        isPaused = !isPaused;
+        const btn = document.getElementById('pauseBtn');
+        if (isPaused) {
+            btn.innerText = "Resume Auto-Doc";
+            btn.style.backgroundColor = "var(--warning)";
+            btn.style.color = "#000";
+            document.getElementById('serverStatus').innerText = "Auto-Doc Paused";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--text-secondary)";
+            clearTimeout(typingTimer);
+        } else {
+            btn.innerText = "Pause Auto-Doc";
+            btn.style.backgroundColor = "var(--bg-card)";
+            btn.style.color = "var(--text-primary)";
+            document.getElementById('serverStatus').innerText = "Editor Ready";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--accent-primary)";
+        }
+    }
+
+    require(['vs/editor/editor.main'], function () {
+        editor = monaco.editor.create(document.getElementById('editorContainer'), {
+            value: '# Type a python function here, e.g.\n# def process_data(data):\n#     pass\n\n',
+            language: 'python',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            minimap: { enabled: false }
+        });
+
+        // Register Explain Code Context Menu Action
+        editor.addAction({
+            id: 'explain-code',
+            label: 'Explain Code...',
+            contextMenuGroupId: 'navigation',
+            contextMenuOrder: 1.5,
+            precondition: null,
+            keybindingContext: null,
+            run: function (ed) {
+                onExplainCodeContext(ed);
+            }
+        });
+
+        // Listen for changes
+        editor.onDidChangeModelContent((event) => {
+            if (isGenerating || isPaused) return;
+
+            clearTimeout(typingTimer);
+
+            // Fast fail: Did they explicitly press Enter to create a newline?
+            const isNewline = event.changes.some(change => change.text.includes('\n'));
+
+            // Set status to typing
+            document.getElementById('serverStatus').innerText = "Typing...";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--warning)";
+
+            // Only start the 15s generation countdown IF they completed a line
+            if (isNewline) {
+                document.getElementById('serverStatus').innerText = "Waiting 15s before generation...";
+                typingTimer = setTimeout(doneTyping, doneTypingInterval);
+            }
+        });
+    });
+
+    async function doneTyping() {
+        const currentCode = editor.getValue();
+        if (!currentCode.trim()) {
+            document.getElementById('serverStatus').innerText = "Editor Ready";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--accent-primary)";
+            return;
+        }
+
+        document.getElementById('serverStatus').innerText = "Analyzing...";
+        document.getElementById('serverStatus').style.backgroundColor = "var(--warning)";
+
+        const docLevel = document.getElementById('docLevelSelect').value || 'maximum';
+        const currentLang = editor.getModel().getLanguageId();
+
+        try {
+            // 1. Extract symbols
+            const res = await fetch('/api/extract-symbols', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: currentCode,
+                    language: currentLang,
+                    doc_level: docLevel
+                })
+            });
+
+            if (!res.ok) throw new Error("Failed to extract symbols.");
+
+            const data = await res.json();
+            const items = data.items;
+
+            // If it found items without docstrings, let's generate!
+            if (items && items.length > 0) {
+                isGenerating = true; // Lock the onDidChange listener
+
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+
+                    document.getElementById('serverStatus').innerText = `Generating: ${item.name}...`;
+
+                    const genRes = await fetch('/api/generate-comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            code_snippet: item.snippet,
+                            indentation: item.indentation || "",
+                            is_inline: item.is_inline || false,
+                            language: currentLang,
+                            doc_level: docLevel,
+                            full_replace: item.full_replace || false
+                        })
+                    });
+
+                    if (genRes.ok) {
+                        const genData = await genRes.json();
+
+                        if (item.full_replace) {
+                            // Non-Python: the LLM returned the whole commented block
+                            const fullRange = editor.getModel().getFullModelRange();
+                            editor.executeEdits("ai-doc-generator", [{
+                                range: fullRange,
+                                text: genData.docstring,
+                                forceMoveMarkers: true
+                            }]);
+                        } else {
+                            // Python AST insertion
+                            editor.executeEdits("ai-doc-generator", [{
+                                range: new monaco.Range(item.insert_line, 1, item.insert_line, 1),
+                                text: genData.docstring,
+                                forceMoveMarkers: true
+                            }]);
+                            editor.revealLineInCenter(item.insert_line);
+                        }
+
+                        await new Promise(r => setTimeout(r, 600)); // typing delay buffer
+                    }
+                }
+
+                // Update Sidebar Language UI
+                let printLangName = currentLang;
+                let iconEmoji = '💻';
+                if (currentLang === 'python') { printLangName = 'Python'; iconEmoji = '🐍'; }
+                else if (currentLang === 'javascript') { printLangName = 'JavaScript'; iconEmoji = '🟨'; }
+                else if (currentLang === 'cpp' || currentLang === 'c') { printLangName = 'C / C++'; iconEmoji = '⚙️'; }
+                else if (currentLang === 'java') { printLangName = 'Java'; iconEmoji = '☕'; }
+                else if (currentLang === 'markdown') { printLangName = 'Markdown'; iconEmoji = '📝'; }
+                else if (currentLang === 'plaintext') { printLangName = 'Text'; iconEmoji = '📄'; }
+
+                document.getElementById('uiLanguageName').innerText = printLangName;
+                document.getElementById('uiLanguageIcon').innerText = iconEmoji;
+
+                isGenerating = false; // Unlock
+                document.getElementById('serverStatus').innerText = "Generation Complete";
+                document.getElementById('serverStatus').style.backgroundColor = "var(--success)";
+                if (document.getElementById('genDocGroup')) document.getElementById('genDocGroup').style.display = 'flex';
+            } else {
+                // Nothing new to generate
+                document.getElementById('serverStatus').innerText = "Editor Ready";
+                document.getElementById('serverStatus').style.backgroundColor = "var(--accent-primary)";
+                if (document.getElementById('genDocGroup')) document.getElementById('genDocGroup').style.display = 'flex';
+            }
+
+            // Trigger dynamic sidebar metrics based on the current context
+            syncSidebarConcepts(currentCode);
+            syncSidebarSimilarity(currentCode);
+
+        } catch (err) {
+            console.error(err);
+            isGenerating = false;
+            document.getElementById('serverStatus').innerText = "Error Analyzing";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--danger)";
+        }
+    }
+
+    async function syncSidebarConcepts(code) {
+        if (!code || !code.trim()) return;
+        const container = document.getElementById('uiConceptsContainer');
+        const loader = document.getElementById('uiConceptLoading');
+
+        loader.style.display = 'block';
+        container.innerHTML = '';
+        container.appendChild(loader);
+
+        try {
+            const res = await fetch('/api/analyze-concepts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                loader.style.display = 'none';
+                data.concepts.forEach(concept => {
+                    const span = document.createElement('span');
+                    span.className = 'concept-tag';
+                    span.innerText = concept;
+                    container.appendChild(span);
+                });
+            } else {
+                loader.innerText = "Fetch error";
+            }
+        } catch (err) {
+            console.error("Failed to analyze concepts", err);
+            loader.innerText = "Analysis Failed";
+        }
+    }
+
+    async function syncSidebarSimilarity(code) {
+        if (!code || !code.trim()) return;
+
+        const labelText = document.getElementById('uiSimilarityLabel');
+        const scoreText = document.getElementById('uiSimilarityScore');
+        const barFill = document.getElementById('uiSimilarityBar');
+        const sourceText = document.getElementById('uiSimilaritySource');
+        const linkElem = document.getElementById('uiSimilarityLink');
+
+        labelText.innerText = "Analyzing...";
+
+        try {
+            const res = await fetch('/api/analyze-similarity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                labelText.innerText = "Snippet Similarity";
+                scoreText.innerText = data.score + "%";
+                barFill.style.width = data.score + "%";
+                sourceText.innerText = data.source;
+                linkElem.style.display = 'inline';
+
+                // Adjust color based on score severity
+                if (data.score > 70) {
+                    scoreText.style.color = "var(--success)";
+                    barFill.style.backgroundColor = "var(--success)";
+                } else if (data.score > 40) {
+                    scoreText.style.color = "var(--warning)";
+                    barFill.style.backgroundColor = "var(--warning)";
+                } else {
+                    scoreText.style.color = "var(--danger)";
+                    barFill.style.backgroundColor = "var(--danger)";
+                }
+            }
+        } catch (err) {
+            console.error("Failed to analyze similarity", err);
+            labelText.innerText = "Analysis Failed";
+        }
+    }
+
+    async function runCode() {
+        const btn = document.getElementById('runCodeBtn');
+        const term = document.getElementById('terminalOutput');
+        const currentCode = editor.getValue();
+
+        if (!currentCode.trim()) {
+            term.innerText = "No code to run.";
+            return;
+        }
+
+        btn.innerText = "Running...";
+        btn.style.backgroundColor = "var(--warning)";
+        term.innerText = "Executing...\n";
+        term.style.color = "var(--text-primary)";
+        term.style.backgroundColor = "var(--bg-primary)";
+
+        try {
+            const res = await fetch('/api/run-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: currentCode })
+            });
+
+            if (!res.ok) throw new Error("Failed to execute code.");
+
+            const data = await res.json();
+
+            if (data.error) {
+                term.style.color = "var(--danger)"; // Red for errors
+                term.innerText = (data.output ? data.output + "\n" : "") + data.error;
+            } else {
+                term.innerText = data.output || "(Code executed successfully with no output)";
+            }
+        } catch (err) {
+            term.style.color = "var(--danger)";
+            term.innerText = "Error interacting with backend: " + err.message;
+        } finally {
+            btn.innerText = "Run Code";
+            btn.style.backgroundColor = "var(--success)";
+        }
+    }
+
+    function updateEditorLanguage() {
+        if (!editor) return;
+        const newLang = document.getElementById('langSelect').value;
+        monaco.editor.setModelLanguage(editor.getModel(), newLang);
+
+        // Setup initial placeholder text based on language if editor is empty or still has old placeholder
+        const currentCode = editor.getValue();
+        if (currentCode.trim() === '' || currentCode.includes('Type a python function here')) {
+            if (newLang === 'python') {
+                editor.setValue('# Type a python function here, e.g.\n# def process_data(data):\n#     pass\n\n');
+            } else if (newLang === 'javascript') {
+                editor.setValue('// Type a JS function here, e.g.\n// function processData(data) {\n// }\n\n');
+            } else if (newLang === 'cpp' || newLang === 'c' || newLang === 'java') {
+                editor.setValue('// Type your code here\n\n');
+            }
+        }
+    }
+
+    async function generateDocument() {
+        if (!editor) return;
+        const currentCode = editor.getValue();
+        if (!currentCode.trim()) {
+            alert("No text to generate a document from.");
+            return;
+        }
+
+        const format = document.getElementById('docFormatSelect').value;
+        const template = document.getElementById('docTemplateSelect').value;
+        const btn = document.getElementById('genDocBtn');
+        const originalText = btn.innerText;
+
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/generate-document', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: currentCode,
+                    format: format,
+                    filename: "live_editor_code",
+                    template: template,
+                    language: document.getElementById('langSelect').value
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || "Generation failed.");
+            }
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `live_editor_code.${format.toLowerCase()}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error(err);
+            alert("Document Generation failed: " + err.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // Global state for context menu flow
+    let highlightedCodeForExplanation = "";
+
+    // Function attached to context menu action
+    function onExplainCodeContext(ed) {
+        const selection = ed.getSelection();
+        const selectedText = ed.getModel().getValueInRange(selection);
+        if (!selectedText || !selectedText.trim()) return;
+
+        highlightedCodeForExplanation = selectedText;
+
+        // Show modal
+        const modal = document.getElementById('explainModal');
+        const input = document.getElementById('explainUserInput');
+        input.value = ""; // Reset
+        modal.classList.add('show');
+        input.focus();
+    }
+
+    // Attached to the Modal Cancel button
+    function closeExplainModal() {
+        document.getElementById('explainModal').classList.remove('show');
+        highlightedCodeForExplanation = "";
+    }
+
+    // Attached to the Modal Ask AI button
+    async function submitExplainRequest() {
+        const userInput = document.getElementById('explainUserInput').value;
+        const codeToExplain = highlightedCodeForExplanation;
+        closeExplainModal();
+
+        if (!codeToExplain) return;
+
+        // Show loading in AI sidebar
+        const explanationContent = document.getElementById('aiExplanationContent');
+        const loadingIndicator = document.getElementById('aiLoadingIndicator');
+
+        explanationContent.style.display = 'none';
+        loadingIndicator.style.display = 'flex';
+
+        try {
+            const res = await fetch('/api/explain-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: codeToExplain,
+                    user_input: userInput || null
+                })
+            });
+
+            if (!res.ok) throw new Error("Failed to reach explain endpoint.");
+
+            const data = await res.json();
+
+            // Display the markdown natively in the sidebar using marked.js
+            explanationContent.style.display = 'block';
+            explanationContent.innerHTML = marked.parse(data.explanation);
+            explanationContent.style.whiteSpace = 'normal';
+
+        } catch (err) {
+            console.error(err);
+            explanationContent.style.display = 'block';
+            explanationContent.innerText = "Error fetching explanation: " + err.message;
+            explanationContent.style.color = "var(--danger)";
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

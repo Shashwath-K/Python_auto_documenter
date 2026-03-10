@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Mode - Ghost-Typer{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/components/editor.css">
+<link rel="stylesheet" href="/static/css/components/cards.css">
+{% endblock %}
+
+{% block content %}
+<a href="/" class="back-link">Back to Home</a>
+<h1>Upload & Analyze</h1>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div class="status" id="serverStatus">Server Online</div>
+    </div>
+    <p>Waiting for hotkey triggers from the client listener (Ctrl+Alt+D), or upload a supported file directly below.</p>
+
+    <hr>
+
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button onclick="document.getElementById('fileInput').click()" class="btn-primary">Upload File</button>
+            <select id="docLevelSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                <option value="minimum">Docs: Classes & Functions</option>
+                <option value="medium" selected>Docs: Medium Density</option>
+                <option value="maximum">Docs: Line-by-Line</option>
+            </select>
+            <button id="downloadBtn" onclick="downloadFile()" class="btn-primary"
+                style="display: none; background-color: var(--success); padding: 0.5rem 1rem;">Download File</button>
+            <div id="genDocGroup"
+                style="display: none; gap: 0.5rem; border-left: 1px solid var(--border-color); padding-left: 1rem; margin-left: 0.5rem; align-items: center;">
+                <span style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);">Advanced
+                    Options:</span>
+                <select id="docTemplateSelect" class="modal-input"
+                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                    <option value="Classic">Classic Template</option>
+                    <option value="Modern">Modern Template</option>
+                    <option value="Executive">Executive</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Creative">Creative</option>
+                    <option value="Minimalist">Minimalist</option>
+                </select>
+                <select id="docFormatSelect" class="modal-input"
+                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                    <option value="PDF">PDF</option>
+                    <option value="DOCX">DOCX</option>
+                </select>
+                <button id="genDocBtn" onclick="generateDocument()" class="btn-primary"
+                    style="background-color: var(--success); padding: 0.5rem 1rem;">Download</button>
+            </div>
+        </div>
+    </div>
+    <input type="file" id="fileInput" accept=".py,.js,.jsx,.ts,.tsx,.cpp,.c,.java,.md,.txt,.html,.css,.ipynb"
+        style="display: none;">
+
+    <div id="viewTabs"
+        style="display: none; gap: 1rem; margin-top: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <button id="tabPreview" onclick="toggleView('preview')" class="btn-primary">Preview</button>
+        <button id="tabRaw" onclick="toggleView('raw')" class="btn-secondary">Code (Raw)</button>
+    </div>
+
+    <div id="previewContainer"
+        style="display: none; min-height: 400px; padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; overflow-y: auto;">
+    </div>
+    <div id="editorContainer" class="editor-container"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Load Monaco Editor via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs/loader.min.js"></script>
+<script>
+    // Setup Monaco
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' } });
+    let editor;
+    let isEditing = false;
+
+    require(['vs/editor/editor.main'], function () {
+        editor = monaco.editor.create(document.getElementById('editorContainer'), {
+            value: '',
+            language: 'python',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            scrollBeyondLastLine: false,
+            minimap: { enabled: false }
+        });
+
+        // Register Explain Code Context Menu Action
+        editor.addAction({
+            id: 'explain-code',
+            label: 'Explain Code...',
+            contextMenuGroupId: 'navigation',
+            contextMenuOrder: 1.5,
+            precondition: null,
+            keybindingContext: null,
+            run: function (ed) {
+                onExplainCodeContext(ed);
+            }
+        });
+    });
+
+    // Global tracker for precise language info
+    let currentUploadedLang = 'python';
+    let originalFileName = 'download.txt'; // Default fallback
+
+    document.getElementById('fileInput').addEventListener('change', async function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        originalFileName = file.name;
+        // Buttons stay hidden until generation completes or is skipped
+        document.getElementById('downloadBtn').style.display = 'none';
+        document.getElementById('genDocGroup').style.display = 'none';
+
+        const fileName = file.name.toLowerCase();
+        let monacoLang = 'python';
+        if (fileName.endsWith('.js') || fileName.endsWith('.jsx')) monacoLang = 'javascript';
+        else if (fileName.endsWith('.ts') || fileName.endsWith('.tsx')) monacoLang = 'typescript';
+        else if (fileName.endsWith('.html')) monacoLang = 'html';
+        else if (fileName.endsWith('.css')) monacoLang = 'css';
+        else if (fileName.endsWith('.cpp') || fileName.endsWith('.c')) monacoLang = 'cpp';
+        else if (fileName.endsWith('.java')) monacoLang = 'java';
+        else if (fileName.endsWith('.md')) monacoLang = 'markdown';
+        else if (fileName.endsWith('.txt')) monacoLang = 'plaintext';
+        else if (fileName.endsWith('.ipynb')) monacoLang = 'ipynb';
+
+        currentUploadedLang = monacoLang;
+
+        const text = await file.text();
+        document.getElementById('editorContainer').classList.add('editor-container-visible');
+
+        if (monacoLang === 'ipynb' || monacoLang === 'markdown') {
+            document.getElementById('viewTabs').style.display = 'flex';
+            toggleView('preview'); // Default to preview
+        } else {
+            document.getElementById('viewTabs').style.display = 'none';
+            toggleView('raw');
+        }
+
+        if (editor) {
+            monaco.editor.setModelLanguage(editor.getModel(), monacoLang === 'ipynb' ? 'json' : monacoLang);
+            editor.setValue(text);
+        }
+
+        isEditing = true; // Stop auto-refresh
+        document.getElementById('serverStatus').innerText = "Analyzing File";
+        document.getElementById('serverStatus').style.backgroundColor = "var(--warning)";
+
+        renderPreview(text, monacoLang);
+
+        // Short timeout to allow UI to render the editor
+        setTimeout(async () => {
+            if (confirm("Generate comments for the code?")) {
+                await generateCommentsForCode(text);
+            } else {
+                document.getElementById('serverStatus').innerText = "Server Online";
+                document.getElementById('serverStatus').style.backgroundColor = "var(--accent-primary)";
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+                document.getElementById('genDocGroup').style.display = 'flex';
+            }
+        }, 500);
+    });
+
+    function toggleView(mode) {
+        const tabPreview = document.getElementById('tabPreview');
+        const tabRaw = document.getElementById('tabRaw');
+        tabPreview.style.cssText = '';
+        tabRaw.style.cssText = '';
+
+        if (mode === 'preview') {
+            document.getElementById('previewContainer').style.display = 'block';
+            document.getElementById('editorContainer').classList.remove('editor-container-visible');
+            document.getElementById('editorContainer').style.display = 'none';
+            tabPreview.className = 'btn-primary';
+            tabRaw.className = 'btn-secondary';
+        } else {
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('editorContainer').style.display = 'block';
+            document.getElementById('editorContainer').classList.add('editor-container-visible');
+            tabRaw.className = 'btn-primary';
+            tabPreview.className = 'btn-secondary';
+        }
+    }
+
+    function renderPreview(text, lang) {
+        const container = document.getElementById('previewContainer');
+        container.innerHTML = '';
+
+        if (lang === 'markdown') {
+            container.innerHTML = `<div class="markdown-preview">${marked.parse(text)}</div>`;
+        } else if (lang === 'ipynb') {
+            try {
+                const notebook = JSON.parse(text);
+                let html = '';
+                if (notebook.cells) {
+                    notebook.cells.forEach((cell, idx) => {
+                        const source = Array.isArray(cell.source) ? cell.source.join('') : cell.source;
+                        if (cell.cell_type === 'markdown') {
+                            html += `<div class="notebook-cell markdown-cell" style="padding: 1rem; margin-bottom: 0.5rem; background: var(--bg-card); border-radius: 4px;">${marked.parse(source)}</div>`;
+                        } else if (cell.cell_type === 'code') {
+                            html += `<div class="notebook-cell code-cell" style="padding: 1rem; margin-bottom: 0.5rem; background: #1e1e1e; border-radius: 4px; border-left: 4px solid var(--accent-primary);">
+                                <div style="color: #888; font-size: 0.75rem; margin-bottom: 0.5rem; text-transform: uppercase;">[${idx}] Code</div>
+                                <pre style="margin: 0; white-space: pre-wrap;"><code style="color: #d4d4d4; font-family: monospace;">${source.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
+                            </div>`;
+                        }
+                    });
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = `<p style="color: var(--error);">Error parsing Jupyter Notebook JSON: ${err.message}</p>`;
+            }
+        }
+    }
+
+    async function generateCommentsForCode(codeText) {
+
+        const docLevel = document.getElementById('docLevelSelect').value || 'maximum';
+        let langId = currentUploadedLang;
+
+        try {
+            // Extract
+            const res = await fetch('/api/extract-symbols', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: codeText,
+                    language: langId,
+                    doc_level: docLevel
+                })
+            });
+
+            if (!res.ok) throw new Error("Failed extraction");
+
+            const data = await res.json();
+            const items = data.items;
+
+            if (!items || items.length === 0) {
+                alert("No classes or functions found to comment (or they already have docstrings).");
+                document.getElementById('serverStatus').innerText = "Server Online";
+                document.getElementById('serverStatus').style.backgroundColor = "var(--accent-primary)";
+                return;
+            }
+
+            if (items && items.length > 0) {
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+
+                    document.getElementById('serverStatus').innerText = `Generating ${i + 1}/${items.length}: ${item.name}...`;
+
+                    const genRes = await fetch('/api/generate-comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            code_snippet: item.snippet,
+                            indentation: item.indentation || "",
+                            is_inline: item.is_inline || false,
+                            language: langId,
+                            doc_level: docLevel,
+                            full_replace: item.full_replace || false,
+                            is_markdown_cell: item.is_markdown_cell || false
+                        })
+                    });
+
+                    if (genRes.ok) {
+                        const genData = await genRes.json();
+
+                        if (item.is_ipynb_cell) {
+                            try {
+                                const notebookText = editor.getValue();
+                                const notebookObj = JSON.parse(notebookText);
+
+                                // Make docstring into an array of lines to match ipynb spec natively
+                                const docstringLines = genData.docstring.split('\n').map(l => l + '\n');
+                                notebookObj.cells[item.cell_index].source = docstringLines;
+
+                                const newJson = JSON.stringify(notebookObj, null, 1);
+
+                                const fullRange = editor.getModel().getFullModelRange();
+                                editor.executeEdits("ai-doc-generator", [{
+                                    range: fullRange,
+                                    text: newJson,
+                                    forceMoveMarkers: true
+                                }]);
+                            } catch (err) {
+                                console.error("Failed to parse local notebook logic", err);
+                            }
+                        } else if (item.full_replace) {
+                            const fullRange = editor.getModel().getFullModelRange();
+                            editor.executeEdits("ai-doc-generator", [{
+                                range: fullRange,
+                                text: genData.docstring,
+                                forceMoveMarkers: true
+                            }]);
+                        } else {
+                            editor.executeEdits("ai-doc-generator", [{
+                                range: new monaco.Range(item.insert_line, 1, item.insert_line, 1),
+                                text: genData.docstring,
+                                forceMoveMarkers: true
+                            }]);
+                            editor.revealLineInCenter(item.insert_line);
+                        }
+                        // Wait a bit to simulate "ghost typing" reading pace
+                        await new Promise(r => setTimeout(r, 600));
+                    }
+                }
+            }
+
+            if (currentUploadedLang === 'ipynb' || currentUploadedLang === 'markdown') {
+                renderPreview(editor.getValue(), currentUploadedLang);
+            }
+
+            // Update Sidebar Language UI
+            let printLangName = currentUploadedLang;
+            let iconEmoji = '💻';
+            if (currentUploadedLang === 'python') { printLangName = 'Python'; iconEmoji = '🐍'; }
+            else if (currentUploadedLang === 'javascript') { printLangName = 'JavaScript / React'; iconEmoji = '🟨'; }
+            else if (currentUploadedLang === 'typescript') { printLangName = 'TypeScript'; iconEmoji = '📘'; }
+            else if (currentUploadedLang === 'html') { printLangName = 'HTML'; iconEmoji = '🌐'; }
+            else if (currentUploadedLang === 'css') { printLangName = 'CSS'; iconEmoji = '🎨'; }
+            else if (currentUploadedLang === 'cpp' || currentUploadedLang === 'c') { printLangName = 'C / C++'; iconEmoji = '⚙️'; }
+            else if (currentUploadedLang === 'java') { printLangName = 'Java'; iconEmoji = '☕'; }
+            else if (currentUploadedLang === 'ipynb') { printLangName = 'Jupyter Notebook'; iconEmoji = '📓'; }
+            else if (currentUploadedLang === 'markdown') { printLangName = 'Markdown'; iconEmoji = '📝'; }
+            else if (currentUploadedLang === 'plaintext') { printLangName = 'Text'; iconEmoji = '📄'; }
+
+            document.getElementById('uiLanguageName').innerText = printLangName;
+            document.getElementById('uiLanguageIcon').innerText = iconEmoji;
+
+            // Trigger dynamic sidebar metrics based on the current context
+            const finalCode = editor.getValue();
+            syncSidebarConcepts(finalCode);
+            syncSidebarSimilarity(finalCode);
+
+            document.getElementById('serverStatus').innerText = "Generation Complete";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--success)";
+
+            // Show advanced options and download buttons after successful generation
+            document.getElementById('downloadBtn').style.display = 'inline-block';
+            document.getElementById('genDocGroup').style.display = 'flex';
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred during generation: " + err.message);
+            document.getElementById('serverStatus').innerText = "Error";
+            document.getElementById('serverStatus').style.backgroundColor = "var(--danger)";
+        }
+    }
+
+    async function syncSidebarConcepts(code) {
+        if (!code || !code.trim()) return;
+        const container = document.getElementById('uiConceptsContainer');
+        const loader = document.getElementById('uiConceptLoading');
+
+        loader.style.display = 'block';
+        container.innerHTML = '';
+        container.appendChild(loader);
+
+        try {
+            const res = await fetch('/api/analyze-concepts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                loader.style.display = 'none';
+                data.concepts.forEach(concept => {
+                    const span = document.createElement('span');
+                    span.className = 'concept-tag';
+                    span.innerText = concept;
+                    container.appendChild(span);
+                });
+            } else {
+                loader.innerText = "Fetch error";
+            }
+        } catch (err) {
+            console.error("Failed to analyze concepts", err);
+            loader.innerText = "Analysis Failed";
+        }
+    }
+
+    async function syncSidebarSimilarity(code) {
+        if (!code || !code.trim()) return;
+
+        const labelText = document.getElementById('uiSimilarityLabel');
+        const scoreText = document.getElementById('uiSimilarityScore');
+        const barFill = document.getElementById('uiSimilarityBar');
+        const sourceText = document.getElementById('uiSimilaritySource');
+        const linkElem = document.getElementById('uiSimilarityLink');
+
+        labelText.innerText = "Analyzing...";
+
+        try {
+            const res = await fetch('/api/analyze-similarity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                labelText.innerText = "Snippet Similarity";
+                scoreText.innerText = data.score + "%";
+                barFill.style.width = data.score + "%";
+                sourceText.innerText = data.source;
+                linkElem.style.display = 'inline';
+
+                // Adjust color based on score severity
+                if (data.score > 70) {
+                    scoreText.style.color = "var(--success)";
+                    barFill.style.backgroundColor = "var(--success)";
+                } else if (data.score > 40) {
+                    scoreText.style.color = "var(--warning)";
+                    barFill.style.backgroundColor = "var(--warning)";
+                } else {
+                    scoreText.style.color = "var(--danger)";
+                    barFill.style.backgroundColor = "var(--danger)";
+                }
+            }
+        } catch (err) {
+            console.error("Failed to analyze similarity", err);
+            labelText.innerText = "Analysis Failed";
+        }
+    }
+    function downloadFile() {
+        if (!editor) return;
+        const currentCode = editor.getValue();
+
+        // Create Blob and trigger download
+        const blob = new Blob([currentCode], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = originalFileName;
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    async function generateDocument() {
+        if (!editor) return;
+        const currentCode = editor.getValue();
+        if (!currentCode.trim()) {
+            alert("No text to generate a document from.");
+            return;
+        }
+
+        const format = document.getElementById('docFormatSelect').value;
+        const template = document.getElementById('docTemplateSelect').value;
+        const btn = document.getElementById('genDocBtn');
+        const originalText = btn.innerText;
+
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+
+        // Strip extension from originalFileName for the document title
+        const baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;
+
+        try {
+            const res = await fetch('/api/generate-document', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: currentCode,
+                    format: format,
+                    filename: baseName,
+                    template: template,
+                    language: currentUploadedLang
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || "Generation failed.");
+            }
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${baseName}.${format.toLowerCase()}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error(err);
+            alert("Document Generation failed: " + err.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // Global state for context menu flow
+    let highlightedCodeForExplanation = "";
+
+    // Function attached to context menu action
+    function onExplainCodeContext(ed) {
+        const selection = ed.getSelection();
+        const selectedText = ed.getModel().getValueInRange(selection);
+        if (!selectedText || !selectedText.trim()) return;
+
+        highlightedCodeForExplanation = selectedText;
+
+        // Show modal
+        const modal = document.getElementById('explainModal');
+        const input = document.getElementById('explainUserInput');
+        input.value = ""; // Reset
+        modal.classList.add('show');
+        input.focus();
+    }
+
+    // Attached to the Modal Cancel button
+    function closeExplainModal() {
+        document.getElementById('explainModal').classList.remove('show');
+        highlightedCodeForExplanation = "";
+    }
+
+    // Attached to the Modal Ask AI button
+    async function submitExplainRequest() {
+        const userInput = document.getElementById('explainUserInput').value;
+        const codeToExplain = highlightedCodeForExplanation;
+        closeExplainModal();
+
+        if (!codeToExplain) return;
+
+        // Show loading in AI sidebar
+        const explanationContent = document.getElementById('aiExplanationContent');
+        const loadingIndicator = document.getElementById('aiLoadingIndicator');
+
+        explanationContent.style.display = 'none';
+        loadingIndicator.style.display = 'flex';
+
+        try {
+            const res = await fetch('/api/explain-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: codeToExplain,
+                    user_input: userInput || null
+                })
+            });
+
+            if (!res.ok) throw new Error("Failed to reach explain endpoint.");
+
+            const data = await res.json();
+
+            // Display the markdown natively in the sidebar using marked.js
+            explanationContent.style.display = 'block';
+            explanationContent.innerHTML = marked.parse(data.explanation);
+            explanationContent.style.whiteSpace = 'normal';
+
+        } catch (err) {
+            console.error(err);
+            explanationContent.style.display = 'block';
+            explanationContent.innerText = "Error fetching explanation: " + err.message;
+            explanationContent.style.color = "var(--danger)";
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

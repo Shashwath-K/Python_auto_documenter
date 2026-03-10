@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ghost-Typer{% endblock %}</title>
+    <!-- Core Application CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/components/cards.css">
+    <link rel="stylesheet" href="/static/css/components/sidebar.css">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <header class="app-header">
+        <h1 class="app-title">Ghost-Typer</h1>
+    </header>
+
+    <div class="layout-body">
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        {% block sidebar %}
+        {% include 'components/sidebar.html' %}
+        {% endblock %}
+    </div>
+
+    <!-- Explain Code Modal -->
+    <div id="explainModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 1rem;">Explain Code</h3>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.5rem;">What do you want to
+                know about this snippet? Leave blank for a general explanation.</p>
+            <input type="text" id="explainUserInput" class="modal-input" placeholder="e.g., How does this loop work?"
+                autocomplete="off">
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                <button onclick="closeExplainModal()" class="btn-secondary">Cancel</button>
+                <button onclick="submitExplainRequest()" class="btn-primary">Ask AI</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        Ghost-Typing Auto-Documenter &copy; 2026. Local Engine: Ollama.
+    </footer>
+
+    <!-- Page Specific Scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
