@@ -11,11 +11,11 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
     
     # Configure Doc Level Instructions for Docstrings
     if doc_level == "minimum":
-        level_instruction = "Focus on a high-level summary of the class or function."
+        level_instruction = "Low density (approx 30%). Focus strictly on a high-level summary of the class or function."
     elif doc_level == "medium":
-        level_instruction = "Provide a slightly more detailed explanation of the logic."
+        level_instruction = "Medium density (approx 50%). Provide a detailed explanation of the logic, covering main flow and parameters."
     else: # maximum
-        level_instruction = "Provide a highly detailed step-by-step explanation of the internal logic."
+        level_instruction = "High density (100%). Provide a highly detailed step-by-step explanation of every single line of internal logic."
 
     # Language Specific Overrides
     if language != "python":
@@ -39,11 +39,11 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
             """
         else:
             if doc_level == "minimum":
-                density = "Add a high-level block comment at the top, and ONLY comment class/function definitions."
+                density = "Low density (approx 30%). Add a high-level block comment at the top, and ONLY comment class/function definitions."
             elif doc_level == "medium":
-                density = "Add comments for functions, classes, and complex logic blocks or variable assignments."
+                density = "Medium density (approx 50%). Add comments for functions, classes, and complex logic blocks or variable assignments."
             else:
-                density = "Add short comments to almost every significant line to explain what it does step-by-step."
+                density = "High density (100%). Add short comments to almost every significant line to explain what it does step-by-step."
                 
             # For non-python, we send the FULL block and expect the FULL block back properly commented
             prompt = f"""
@@ -55,7 +55,7 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
         CRITICAL:
         1. Use the correct comment syntax for {language.upper()} (e.g. `//` or `/*` for JS/C++, `#` for Bash/R, etc).
         2. Respond ONLY with the newly commented code. Do not wrap it in markdown blockticks like ```js.
-        3. Do not change the original code logic, ONLY add comments.
+        3. DO NOT CHANGE A SINGLE LINE OF THE ORIGINAL CODE LOGIC. DO NOT ADD NEW CODE BLOCKS, DO NOT DELETE CODE. ONLY ADD COMMENTS.
         4. IF A LINE OR SNIPPET ALREADY HAS A COMMENT, DO NOT MODIFY IT OR ADD AN ADDITIONAL COMMENT. KEEP PRE-EXISTING COMMENTS EXACTLY AS THEY ARE.
         
         Code to comment:
@@ -70,11 +70,12 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
             
             CRITICAL: 
             1. DO NOT simply repeat what the code says. Explain its intent.
-            2. Respond ONLY with the comment text itself.
+            2. Respond ONLY with the comment text itself. DO NOT OUTPUT ANY ORIGINAL CODE WHATSOEVER.
             3. Keep it short.
             4. DO NOT wrap the response in markdown code blocks.
             5. DO NOT include the `#` character in your response, just the raw text.
             6. IF THIS SNIPPET ALREADY CONTAINS A COMMENT, DO NOT MODIFY IT OR RETURN A NEW ONE. JUST RETURN THE EXISTING TEXT OR AN EMPTY STRING.
+            7. UNDER NO CIRCUMSTANCES SHOULD YOU RETURN THE PROVIDED CODE. YOU MUST ONLY GENERATE THE COMMENT TEXT.
             
             Here is the code:
             {code_snippet}
@@ -88,10 +89,11 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
             
             CRITICAL: 
             1. DO NOT regurgitate the code. Evaluate its intent based on the Context Level.
-            2. Respond ONLY with the docstring text itself.
+            2. Respond ONLY with the docstring text itself. DO NOT OUTPUT ANY ORIGINAL CODE WHATSOEVER.
             3. DO NOT wrap the response in markdown code blocks (e.g., ```python).
             4. DO NOT include the \"\"\" quotes at the beginning or end of your response, just the inner text.
             5. IF THIS CLASS/FUNCTION ALREADY HAS A DOCSTRING, DO NOT MODIFY IT. RETURN IT EXACTLY AS IS.
+            6. NEVER REWRITE, MODIFY, OR OUTPUT THE PROVIDED CODE. ONLY WRITE THE DOCSTRING TEXT.
             
             Here is the code:
             {code_snippet}
