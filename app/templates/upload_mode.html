@@ -23,9 +23,9 @@
         <div style="display: flex; gap: 1rem; align-items: center;">
             <button onclick="document.getElementById('fileInput').click()" class="btn-primary">Upload File</button>
             <select id="docLevelSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
-                <option value="minimum">Docs: Classes & Functions</option>
-                <option value="medium" selected>Docs: Medium Density</option>
-                <option value="maximum">Docs: Line-by-Line</option>
+                <option value="minimum">Docs: Low (30% density)</option>
+                <option value="medium" selected>Docs: Medium (50% density)</option>
+                <option value="maximum">Docs: High (100% density)</option>
             </select>
             <button id="downloadBtn" onclick="downloadFile()" class="btn-primary"
                 style="display: none; background-color: var(--success); padding: 0.5rem 1rem;">Download File</button>
