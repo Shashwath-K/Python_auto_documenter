@@ -17,20 +17,67 @@
             </div>
         </div>
 
+        <div class="sidebar-widget ai-summary-widget">
+            <h3 class="widget-title">AI Summary Report</h3>
+            <div class="card widget-card ai-summary-card glass-card">
+                <p class="ai-summary-description">Generate an in-depth AI analysis report of your file.</p>
+
+                <div class="ai-summary-options">
+                    <div class="ai-summary-row">
+                        <label class="ai-summary-label">Format</label>
+                        <div class="custom-select-wrapper">
+                            <select id="aiSummaryFormat" class="ai-summary-select">
+                                <option value="PDF">PDF Document</option>
+                                <option value="DOCX">Word (.docx)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ai-summary-row">
+                        <label class="ai-summary-label">Template</label>
+                        <div class="custom-select-wrapper">
+                            <select id="aiSummaryTemplate" class="ai-summary-select">
+                                <option value="Classic">Classic</option>
+                                <option value="Modern">Modern</option>
+                                <option value="Executive">Executive</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Creative">Creative</option>
+                                <option value="Minimalist">Minimalist</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="aiSummaryBtn" class="ai-summary-btn premium-btn" disabled onclick="generateAiSummary()">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span id="aiSummaryBtnText">Generate Report</span>
+                </button>
+                <div class="ai-summary-hint-wrapper" id="aiSummaryHint">
+                    <p class="ai-summary-hint">Upload a file to enable generation</p>
+                </div>
+                <div id="aiSummaryStatus" class="ai-summary-status-box" style="display:none;"></div>
+            </div>
+        </div>
 
         {% block sidebar_extra %}{% endblock %}
 
         <div class="sidebar-widget ai-assistant-widget">
-            <h3 class="widget-title">AI Assistant</h3>
-            <div class="card widget-card assistant-card">
+            <div class="widget-header">
+                <h3 class="widget-title">AI Assistant</h3>
+                <button class="icon-btn-small" onclick="clearAiExplanation()" title="Clear">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 6L6 19M6 6l13 13"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="card widget-card assistant-card glass-card">
                 <div id="aiExplanationContent" class="assistant-content">
                     Highlight code in the editor, right-click, and select "Explain Code..." to see AI analysis here.
                 </div>
                 <div id="aiLoadingIndicator" class="assistant-loading">
-                    <svg class="spinner" viewBox="0 0 50 50">
-                        <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-                    </svg>
-                    Analyzing code...
+                    <div class="premium-spinner"></div>
+                    <span>Analyzing code...</span>
                 </div>
             </div>
         </div>
