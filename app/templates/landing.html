@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ghost-Typer Home{% endblock %}
+{% block title %}Landing - Semantic File Converter & Autodocumenter{% endblock %}
 
 {% block content %}
 <h1>Documentation Automation</h1>
@@ -8,19 +8,41 @@
 
 <div class="tools-grid">
     <!-- Live Editor Mode -->
-    <a href="/live-mode" class="tool-card">
-        <div class="tool-title">Live Editor</div>
+    <a href="/live-mode" class="tool-card card-live">
+        <div class="card-main">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <div class="tool-title">Live Editor</div>
+            <p class="tool-desc">Real-time code documentation and analysis.</p>
+        </div>
     </a>
 
     <!-- Upload Mode -->
-    <a href="/upload-mode" class="tool-card">
-        <div class="tool-title">Upload File</div>
+    <a href="/upload-mode" class="tool-card card-upload">
+        <div class="card-main">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <div class="tool-title">Upload File</div>
+            <p class="tool-desc">Process and convert individual source files.</p>
+        </div>
     </a>
 
     <!-- Repository Mode -->
-    <a href="/repo-mode" class="tool-card">
-        <div class="tool-title">Repository Mode</div>
-    </a>
+    <div class="tool-card card-repo coming-soon">
+        <div class="card-main">
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <div class="tool-title">Repository Mode</div>
+            <p class="tool-desc">Scan entire Git repositories for documentation.</p>
+            <span class="status-badge">Coming Soon</span>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
