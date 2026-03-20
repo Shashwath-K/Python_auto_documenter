@@ -173,3 +173,182 @@ async def explain_code(code_snippet: str, user_query: str = None) -> str:
             return f"Error generating explanation: {e}"
     else:
         return "This is a dummy explanation generated because Ollama is not available."
+
+async def generate_ai_summary(code: str, language: str = "python", filename: str = "program") -> str:
+    """
+    Calls the LLM to generate a richly formatted, in-depth AI Summary analysis document.
+    Targets minimum 2 pages of detailed content.
+    Returns a well-structured markdown string with headings, tables, and bullet lists.
+    """
+    lang_upper = language.upper()
+
+    prompt = f"""
+    You are a world-class senior software engineer and technical educator writing a DETAILED,
+    PROFESSIONAL analysis report that will be published as a PDF.
+
+    I will give you the contents of a {lang_upper} file named '{filename}'.
+
+    ══════════════════════════════════════════════════════════════
+    CRITICAL LENGTH REQUIREMENT
+    ══════════════════════════════════════════════════════════════
+    This report MUST be at least 2 full pages when rendered as a PDF.
+    Every section must be thorough and detailed. SHORT or BRIEF responses are UNACCEPTABLE.
+    Think of the depth of a detailed technical blog post or a university assignment report.
+    ══════════════════════════════════════════════════════════════
+
+    Use clear markdown headings, **bold** labels, well-formatted tables, and professional prose.
+    Follow this EXACT structure:
+
+    ──────────────────────────────────────────────────────────────
+    ## 🧠 Program Description
+    ──────────────────────────────────────────────────────────────
+
+    Write a MINIMUM of 4 detailed paragraphs covering ALL of the following:
+    - **Overview**: What is the purpose of this program? What problem does it solve?
+    - **Methodology**: Describe the step-by-step algorithm or workflow in detail.
+    - **Inputs & Outputs**: What data does it take in, what does it produce?
+    - **Key Techniques**: What statistical, mathematical, or CS concepts are applied?
+    - **Design Choices**: Why was this approach chosen? What are its trade-offs?
+
+    ---
+
+    ## ⏱️ Time & Space Complexity
+    ──────────────────────────────────────────────────────────────
+
+    > **MANDATORY — do not skip any function, loop, cell, or algorithm block.**
+
+    Provide a row for EVERY significant operation in the file (each notebook cell, each function,
+    each major loop, each data transformation). Be pedantic — more rows is better.
+
+    | Function / Block | Time Complexity | Space Complexity | Explanation |
+    |---|---|---|---|
+    | (every function, loop, algorithm, or notebook cell goes here) | O(...) | O(...) | explain WHY this complexity |
+
+    After the table, write **3–5 sentences** analysing the overall complexity profile:
+    - What is the dominant time/space cost?
+    - Is this program computationally feasible for large datasets?
+    - What would happen if the input size doubled or tripled?
+
+    ---
+
+    ## 📦 Dependencies & Libraries Used
+    ──────────────────────────────────────────────────────────────
+
+    | Library / Module | Version Notes | Purpose in This File | Key APIs / Functions Used |
+    |---|---|---|---|
+    | (every import, even standard library) | (if version matters) | (specific role in THIS file) | (exact function names used) |
+
+    After the table, write **2–3 sentences** about the ecosystem these dependencies belong to
+    and any notable compatibility or version considerations.
+
+    ---
+
+    ## 🔷 Programming Patterns & Paradigms
+    ──────────────────────────────────────────────────────────────
+
+    For each pattern or paradigm, use a **bold label** followed by 2–3 sentences of explanation
+    that specifically reference how it appears in THIS file:
+
+    - **Paradigm/Pattern Name**: Detailed explanation referencing specific parts of the code.
+
+    Cover at least: coding paradigm (OOP/functional/procedural), data handling patterns,
+    error handling strategy, modularity, and any design patterns present.
+
+    ---
+
+    ## 🚀 Potential Projects
+    ──────────────────────────────────────────────────────────────
+
+    List **7–10 distinct, creative, real-world project ideas** that build on this code.
+    For each project, provide:
+    - **Project Name** — a catchy title
+    - **Description**: 2–3 sentences explaining what it does and how it extends the concepts here.
+    - **Technologies**: list key tools/libraries needed.
+    - **Difficulty**: Beginner / Intermediate / Advanced
+
+    ---
+
+    ## 📚 Your Next Learning Track
+    ──────────────────────────────────────────────────────────────
+
+    Create a **detailed progressive learning roadmap** with at least **8 steps**.
+    Start from exactly what THIS file demonstrates and progress to expert-level mastery.
+
+    For each step, write:
+    **Step N — [Topic Name]**
+    - **What to learn**: Specific concepts, functions, or techniques.
+    - **Why this step**: How it directly follows from what was seen in this file.
+    - **Resources to try**: 1–2 specific suggestions (library docs, theorem name, etc.)
+
+    ---
+
+    ## ⚡ Potential Optimisations
+    ──────────────────────────────────────────────────────────────
+
+    List at least **6 concrete, file-specific** optimisations. For each:
+
+    **Optimisation N: [Short Title]**
+    - **Current approach**: What the code does now.
+    - **Suggested change**: The specific improvement.
+    - **Expected benefit**: Quantify if possible (e.g. "reduces memory by ~50% for large datasets").
+    - **Trade-off**: Any downside to this change.
+
+    ---
+
+    ## ⚠️ Edge Cases & Pitfalls
+    ──────────────────────────────────────────────────────────────
+
+    List at least **6 specific edge cases or failure modes** that exist in or are directly
+    relevant to THIS code. For each:
+
+    **Case N: [Short Title]**
+    - **Scenario**: Describe the exact condition.
+    - **Impact**: What breaks or goes wrong?
+    - **Mitigation**: How to guard against it.
+
+    ---
+
+    ## 📊 Code Quality Assessment
+    ──────────────────────────────────────────────────────────────
+
+    Provide a professional code review summary covering:
+
+    | Dimension | Rating (1–10) | Comments |
+    |---|---|---|
+    | Readability | X/10 | (specific comments) |
+    | Modularity | X/10 | (specific comments) |
+    | Error Handling | X/10 | (specific comments) |
+    | Performance | X/10 | (specific comments) |
+    | Documentation | X/10 | (specific comments) |
+    | Best Practices | X/10 | (specific comments) |
+
+    After the table, write a **3–4 sentence overall assessment** summarising the code quality.
+
+    ══════════════════════════════════════════════════════════════
+    ABSOLUTE RULES — VIOLATION IS NOT ACCEPTABLE:
+    1. Start your response IMMEDIATELY with ## 🧠 Program Description — ZERO preamble.
+    2. Do NOT reproduce the source code anywhere in the response.
+    3. ALL tables MUST have a header row AND a separator row (|---|---|).
+    4. Use **bold** for ALL labels, headings, and key terms.
+    5. Use horizontal rules (---) between EVERY section.
+    6. MINIMUM length: write enough to fill at least 2 printed A4 pages.
+    7. Be SPECIFIC — reference actual variable names, function names, and logic from the file.
+    8. Generic, vague, or short responses are a FAILURE. Every claim must be specific to THIS file.
+    ══════════════════════════════════════════════════════════════
+
+    File contents:
+    {code}
+    """
+
+    if settings.LLM_PROVIDER == "ollama":
+        try:
+            import ollama
+            response = ollama.chat(model=settings.OLLAMA_MODEL, messages=[
+                {'role': 'user', 'content': prompt}
+            ])
+            return response['message']['content'].strip()
+        except Exception as e:
+            logger.error(f"Error calling Ollama for AI summary: {e}")
+            return f"## ⚠️ Error\n\n> Failed to generate AI summary: {e}"
+    else:
+        return "## 🧠 Program Description\n\nOllama is not configured. This is a placeholder summary."
