@@ -1,60 +1,100 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --bg-primary: #0f172a;
-    /* Slate 900 */
-    --bg-secondary: #1e293b;
-    /* Slate 800 */
-    --bg-tertiary: #334155;
-    /* Slate 700 */
+    --bg-primary: #020617; /* Slate 950 */
+    --bg-secondary: #0f172a; /* Slate 900 */
+    --bg-tertiary: #1e293b; /* Slate 800 */
     --text-primary: #f8fafc;
-    /* Slate 50 */
     --text-secondary: #94a3b8;
-    /* Slate 400 */
     --accent-primary: #3b82f6;
-    /* Blue 500 */
-    --accent-hover: #2563eb;
-    /* Blue 600 */
+    --accent-glow: rgba(59, 130, 246, 0.5);
     --success: #10b981;
-    /* Emerald 500 */
+    --success-glow: rgba(16, 185, 129, 0.5);
     --danger: #ef4444;
-    /* Red 500 */
     --warning: #f59e0b;
-    /* Amber 500 */
-    --border-color: #334155;
-    /* Slate 700 */
+    --border-color: rgba(255, 255, 255, 0.1);
+    
+    /* Design Tokens */
+    --card-blur: blur(12px);
+    --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --transition-standard: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-primary);
+    background: radial-gradient(circle at top right, #0f172a, #020617);
     color: var(--text-primary);
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -10%;
+    left: -10%;
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.05), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* Layout structure */
 .app-header {
-    background-color: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    padding: 1rem 2rem;
+    background-color: #0b1120; /* Slightly darker than bg-secondary for contrast */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.75rem 2rem;
     display: flex;
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 50;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.header-logo {
+    width: 24px;
+    height: 24px;
+    color: var(--accent-primary);
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
 }
 
 .app-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--text-primary);
     margin: 0;
-    letter-spacing: -0.025em;
+}
+
+.header-tagline {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border-color);
 }
 
 .layout-body {
@@ -93,11 +133,15 @@ body {
 /* Typography styles */
 h1 {
     color: var(--text-primary);
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 3rem;
+    font-weight: 800;
     margin-top: 0;
-    margin-bottom: 1rem;
-    letter-spacing: -0.025em;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.04em;
+    background: linear-gradient(to bottom right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 h2 {

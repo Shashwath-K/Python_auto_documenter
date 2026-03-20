@@ -11,39 +11,151 @@
 
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin: 3rem auto;
+    max-width: 1100px;
+    padding: 0 2rem;
 }
 
 .tool-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: var(--card-blur);
+    border-radius: 20px;
     text-decoration: none;
-    background-color: var(--bg-secondary);
+    overflow: hidden;
+    transition: var(--transition-standard);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 2.5rem 1.5rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.tool-card:hover {
+.tool-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.tool-card:hover:not(.coming-soon) {
+    transform: translateY(-8px) scale(1.02);
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-premium);
+}
+
+.card-main {
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    z-index: 1;
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1.5;
+    margin-bottom: 0.5rem;
+    transition: var(--transition-standard);
+    filter: drop-shadow(0 0 8px transparent);
+}
+
+.tool-card:hover:not(.coming-soon) .card-icon {
     transform: translateY(-4px);
-    border-color: var(--accent-primary);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    background-color: var(--bg-tertiary);
+    filter: drop-shadow(0 0 12px var(--icon-glow, var(--accent-glow)));
 }
 
 .tool-title {
-    color: var(--text-primary);
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--text-primary);
     margin: 0;
+    letter-spacing: -0.01em;
 }
+
+.tool-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    max-width: 220px;
+}
+
+/* Color Variants with Glow Effects */
+.card-live { --icon-glow: var(--accent-glow); }
+.card-live .card-icon { color: var(--accent-primary); }
+.card-live:hover { box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.25); }
+
+.card-upload { --icon-glow: var(--success-glow); }
+.card-upload .card-icon { color: var(--success); }
+.card-upload:hover { box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.25); }
+
+.card-repo { --icon-glow: rgba(148, 163, 184, 0.3); }
+.card-repo .card-icon { color: var(--text-secondary); }
+
+/* Coming Soon State */
+.coming-soon {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.status-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(30, 41, 59, 0.8);
+    color: var(--text-secondary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem;
+        gap: 1.5rem;
+    }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.tool-card:nth-child(1) { animation: float 6s ease-in-out infinite; }
+.tool-card:nth-child(2) { animation: float 6s ease-in-out infinite 1s; }
+.tool-card:nth-child(3) { animation: float 6s ease-in-out infinite 2s; }
+
+.tool-card:hover { animation-play-state: paused; }
 
 /* Log entries container */
 .log-entry {
