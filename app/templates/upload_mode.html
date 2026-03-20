@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Upload Mode - Ghost-Typer{% endblock %}
+{% block title %}Upload Mode - Semantic File Converter & Autodocumenter{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="/static/css/components/editor.css">
@@ -143,6 +143,9 @@
             monaco.editor.setModelLanguage(editor.getModel(), monacoLang === 'ipynb' ? 'json' : monacoLang);
             editor.setValue(text);
         }
+
+        // Enable the AI Summary button as soon as the file is loaded
+        enableAiSummaryBtn();
 
         isEditing = true; // Stop auto-refresh
         document.getElementById('serverStatus').innerText = "Analyzing File";
@@ -342,6 +345,91 @@
             alert("An error occurred during generation: " + err.message);
             document.getElementById('serverStatus').innerText = "Error";
             document.getElementById('serverStatus').style.backgroundColor = "var(--danger)";
+        }
+    }
+
+    function enableAiSummaryBtn() {
+        const btn = document.getElementById('aiSummaryBtn');
+        const hint = document.getElementById('aiSummaryHint');
+        const hintWrapper = document.getElementById('aiSummaryHint');
+        if (btn) {
+            btn.disabled = false;
+            if (hint) hint.style.display = 'none';
+            if (hintWrapper) hintWrapper.style.display = 'none';
+        }
+    }
+
+    function clearAiExplanation() {
+        const content = document.getElementById('aiExplanationContent');
+        if (content) {
+            content.innerHTML = 'Highlight code in the editor, right-click, and select "Explain Code..." to see AI analysis here.';
+        }
+    }
+
+    async function generateAiSummary() {
+        if (!editor) return;
+        const code = editor.getValue();
+        if (!code || !code.trim()) {
+            alert('No code loaded. Please upload a file first.');
+            return;
+        }
+
+        const format = document.getElementById('aiSummaryFormat').value;
+        const template = document.getElementById('aiSummaryTemplate').value;
+        const btn = document.getElementById('aiSummaryBtn');
+        const btnText = document.getElementById('aiSummaryBtnText');
+        const btnIcon = document.getElementById('aiSummaryBtnIcon');
+        const statusEl = document.getElementById('aiSummaryStatus');
+
+        // Show loading state
+        btn.disabled = true;
+        btn.classList.add('loading');
+        btnText.innerText = 'Generating...';
+        statusEl.style.display = 'block';
+        statusEl.className = 'ai-summary-status-box';
+        statusEl.innerText = 'Ollama is generating your expert report...';
+
+        // Derive a clean filename (no extension)
+        const baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;
+
+        try {
+            const res = await fetch('/api/generate-ai-summary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: code,
+                    language: currentUploadedLang,
+                    filename: baseName,
+                    format: format,
+                    template: template
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Generation failed.');
+            }
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${baseName}_ai_summary.${format.toLowerCase() === 'docx' ? 'docx' : 'pdf'}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            statusEl.className = 'ai-summary-status-box success';
+            statusEl.innerText = '✓ Report downloaded successfully!';
+        } catch (err) {
+            console.error('AI Summary error:', err);
+            statusEl.className = 'ai-summary-status-box error';
+            statusEl.innerText = '✗ ' + err.message;
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            btnText.innerText = 'Generate Report';
         }
     }
 
