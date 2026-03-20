@@ -85,10 +85,10 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
             return
 
         # 4. Import LLM services locally to avoid circular imports if endpoints import this
-        from app.api.endpoints import process_generation_queue
-        from app.services.parser_service import extract_symbols_from_code
+        from app.services.parser_service import extract_functions_and_classes
         from app.services.llm_service import generate_docstring
         import sys
+        import json
         
         for file_path in target_files:
             rel_path = os.path.relpath(file_path, extract_path)
@@ -107,8 +107,45 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
                 elif ext in {".cpp", ".c"}: lang = "cpp"
                 elif ext == ".java": lang = "java"
                 
-                # Extract symbols
-                symbols = extract_symbols_from_code(code, lang, doc_level)
+                # Extract symbols natively
+                if lang == "python":
+                    symbols = extract_functions_and_classes(code, doc_level)
+                elif lang == "ipynb":
+                    symbols = []
+                    try:
+                        notebook = json.loads(code)
+                        for i, cell in enumerate(notebook.get("cells", [])):
+                            if cell.get("cell_type") == "code":
+                                source = cell.get("source", "")
+                                if isinstance(source, list):
+                                    source = "".join(source)
+                                if source.strip():
+                                    symbols.append({
+                                        "name": f"Notebook Cell {i}",
+                                        "type": "CodeCell",
+                                        "start_line": 1,
+                                        "insert_line": 1,
+                                        "indentation": "",
+                                        "snippet": source,
+                                        "is_inline": False,
+                                        "full_replace": True,
+                                        "is_ipynb_cell": True,
+                                        "is_markdown_cell": False,
+                                        "cell_index": i
+                                    })
+                    except Exception as e:
+                        print(f"Failed to parse ipynb JSON: {e}")
+                else:
+                    symbols = [{
+                        "name": f"{lang.upper()} File",
+                        "type": "RawBlock",
+                        "start_line": 1,
+                        "insert_line": 1,
+                        "indentation": "",
+                        "snippet": code,
+                        "is_inline": False,
+                        "full_replace": True
+                    }]
                 
                 if symbols:
                     # Modify code bottom-up
@@ -116,6 +153,14 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
                     symbols = sorted(symbols, key=lambda x: x["insert_line"], reverse=True)
                     
                     code_lines = modified_code.split("\n")
+                    
+                    # For IPYNB, we edit the JSON object directly
+                    notebook_obj = None
+                    if lang == "ipynb":
+                        try:
+                            notebook_obj = json.loads(code)
+                        except:
+                            pass
                     
                     for sym in symbols:
                         raw_docstring = await generate_docstring(
@@ -126,10 +171,14 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
                             is_markdown_cell=sym.get("is_markdown_cell", False)
                         )
                         
-                        if sym.get("full_replace", False):
+                        if sym.get("is_ipynb_cell", False) and notebook_obj:
+                            docstring_lines = raw_docstring.split('\n')
+                            docstring_lines = [l + '\n' for l in docstring_lines]
+                            notebook_obj["cells"][sym["cell_index"]]["source"] = docstring_lines
+                        elif sym.get("full_replace", False):
                             # Replace the entire file contents
                             code_lines = raw_docstring.split("\n")
-                            # If it's full replace, we can just jump out since it handles the whole file
+                            # If it's full replace for a raw file, we can just jump out since it handles the whole file
                             break
                         else:
                             indent = sym.get("indentation", "")
@@ -142,7 +191,10 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
                             if 0 <= insert_idx <= len(code_lines):
                                 code_lines.insert(insert_idx, formatted_docstring)
                                 
-                    modified_code = "\n".join(code_lines)
+                    if lang == "ipynb" and notebook_obj:
+                        modified_code = json.dumps(notebook_obj, indent=1)
+                    else:
+                        modified_code = "\n".join(code_lines)
                     
                     with open(file_path, "w", encoding="utf-8") as f:
                         f.write(modified_code)
