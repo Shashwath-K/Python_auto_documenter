@@ -78,7 +78,7 @@
     require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' } });
     let editor;
     let typingTimer;
-    const doneTypingInterval = 15000;  // 15 seconds
+    const doneTypingInterval = 3000;   // 3 seconds
     let isGenerating = false;
     let isPaused = false;
 
@@ -102,10 +102,23 @@
     }
 
     require(['vs/editor/editor.main'], function () {
+        // Define a custom theme with brighter comments
+        monaco.editor.defineTheme('custom-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '85c46c', fontStyle: 'italic' },
+                { token: 'comment.doc', foreground: '85c46c' },
+            ],
+            colors: {
+                'editor.background': '#020617', // Match --bg-primary (Slate 950)
+            }
+        });
+
         editor = monaco.editor.create(document.getElementById('editorContainer'), {
             value: '# Type a python function here, e.g.\n# def process_data(data):\n#     pass\n\n',
             language: 'python',
-            theme: 'vs-dark',
+            theme: 'custom-dark',
             automaticLayout: true,
             scrollBeyondLastLine: false,
             minimap: { enabled: false }
@@ -139,7 +152,7 @@
 
             // Only start the 15s generation countdown IF they completed a line
             if (isNewline) {
-                document.getElementById('serverStatus').innerText = "Waiting 15s before generation...";
+                document.getElementById('serverStatus').innerText = "Waiting 3s before generation...";
                 typingTimer = setTimeout(doneTyping, doneTypingInterval);
             }
         });
