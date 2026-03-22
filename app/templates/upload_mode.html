@@ -78,10 +78,23 @@
     let isEditing = false;
 
     require(['vs/editor/editor.main'], function () {
+        // Define a custom theme with brighter comments
+        monaco.editor.defineTheme('custom-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [
+                { token: 'comment', foreground: '85c46c', fontStyle: 'italic' },
+                { token: 'comment.doc', foreground: '85c46c' },
+            ],
+            colors: {
+                'editor.background': '#020617', // Match --bg-primary (Slate 950)
+            }
+        });
+
         editor = monaco.editor.create(document.getElementById('editorContainer'), {
             value: '',
             language: 'python',
-            theme: 'vs-dark',
+            theme: 'custom-dark',
             automaticLayout: true,
             scrollBeyondLastLine: false,
             minimap: { enabled: false }
