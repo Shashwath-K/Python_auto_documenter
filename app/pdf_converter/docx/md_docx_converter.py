@@ -160,15 +160,24 @@ class MDToDocxConverter:
                 continue
                 
             elif type_ == 'fence' or type_ == 'code_block':
-                p = self.doc.add_paragraph(token.content)
-                p.style = 'No Spacing'
-                p.paragraph_format.left_indent = Pt(24)
-                # Word doesn't support background color trivially on paragraphs without XML hacking
-                # Just change font for now
-                for run in p.runs:
+                # Split content into lines for basic highlighting
+                lines = token.content.split('\n')
+                for line in lines:
+                    if not line.strip():
+                        continue
+                    p = self.doc.add_paragraph()
+                    p.style = 'No Spacing'
+                    p.paragraph_format.left_indent = Pt(24)
+                    
+                    run = p.add_run(line)
                     run.font.name = 'Courier New'
                     run.font.size = Pt(10)
-                    run.font.color.rgb = RGBColor(50, 50, 50)
+                    
+                    # Detect comments (simple heuristic)
+                    if line.strip().startswith('#') or line.strip().startswith('//') or line.strip().startswith('"""') or line.strip().startswith("'''"):
+                        run.font.color.rgb = RGBColor(34, 139, 34) # Forest Green
+                    else:
+                        run.font.color.rgb = RGBColor(50, 50, 50) # Dark Gray for code
                 i += 1
                 continue
                 
