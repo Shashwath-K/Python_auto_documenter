@@ -2,7 +2,7 @@ import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Semantic File Converter & Autodocumenter"
+    PROJECT_NAME: str = "Semantic-Aware File Converter with Automatic Documentation Generation Using Local LLM"
     HOST: str = "127.0.0.1"
     PORT: int = 8000
     LLM_PROVIDER: str = "ollama"  # Options 'ollama' or 'dummy'
