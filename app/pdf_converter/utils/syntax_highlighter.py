@@ -16,7 +16,7 @@ class ReportLabFormatter(Formatter):
             Token.Keyword: "#B8680E",      # Orange 
             Token.Name.Builtin: "#000080",
             Token.Literal.String: "#008000", # Green
-            Token.Comment: "#808080",     # Gray
+            Token.Comment: "#404040",     # Dark Gray 
             Token.Operator: "#000000",
             Token.Name.Function: "#0000FF", # Blue
             Token.Name.Class: "#0000FF",
