@@ -35,12 +35,24 @@ def generate_docx(document: StructuredDocument, template: PDFTemplate, output_pa
             doc.add_paragraph(block.content, style='List Bullet')
             
         elif block.type == 'code':
-            p = doc.add_paragraph(block.content)
-            p.style = 'No Spacing'
-            p.paragraph_format.left_indent = Pt(20)
-            runner = p.runs[0]
-            runner.font.name = 'Courier New'
-            runner.font.size = Pt(10)
+            # Split content into lines for basic highlighting
+            lines = block.content.split('\n')
+            for line in lines:
+                if not line.strip() and len(lines) > 1:
+                    continue
+                p = doc.add_paragraph()
+                p.style = 'No Spacing'
+                p.paragraph_format.left_indent = Pt(24)
+                
+                run = p.add_run(line)
+                run.font.name = 'Courier New'
+                run.font.size = Pt(10)
+                
+                # Detect comments
+                if line.strip().startswith('#') or line.strip().startswith('//') or line.strip().startswith('"""') or line.strip().startswith("'''"):
+                    run.font.color.rgb = RGBColor(34, 139, 34) # Forest Green
+                else:
+                    run.font.color.rgb = RGBColor(50, 50, 50) # Dark Gray for code
             
         elif block.type == 'quote':
             p = doc.add_paragraph(block.content)
