@@ -56,6 +56,8 @@
                 </select>
                 <button id="genDocBtn" onclick="generateDocument()" class="btn-run btn-run-visible"
                     style="background-color: var(--success); padding: 0.5rem 1rem;">Download</button>
+                <button id="downloadSourceBtn" onclick="downloadSourceCode()" class="btn-run btn-run-visible"
+                    style="background-color: var(--accent-primary); padding: 0.5rem 1rem;">Download Source</button>
             </div>
         </div>
     </div>
@@ -381,6 +383,42 @@
             btn.innerText = originalText;
             btn.disabled = false;
         }
+    }
+
+    function downloadSourceCode() {
+        if (!editor) return;
+        const currentCode = editor.getValue();
+        if (!currentCode.trim()) {
+            alert("No text to download.");
+            return;
+        }
+
+        const currentLang = document.getElementById('langSelect').value;
+        const extensionMap = {
+            'python': 'py',
+            'javascript': 'js',
+            'typescript': 'ts',
+            'jsx': 'jsx',
+            'html': 'html',
+            'css': 'css',
+            'cpp': 'cpp',
+            'java': 'java',
+            'markdown': 'md',
+            'plaintext': 'txt'
+        };
+        const ext = extensionMap[currentLang] || 'txt';
+        const filename = `live_editor_code.${ext}`;
+
+        const blob = new Blob([currentCode], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     // Global state for context menu flow
