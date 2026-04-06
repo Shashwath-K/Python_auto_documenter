@@ -179,9 +179,9 @@ Project Link: [https://github.com/Shashwath-K/Python_auto_documenter](https://gi
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[landing-screenshot]:images\landing_page.png
-[live-screenshot]: images\live_mode.png
-[repo-screenshot]: images\repo_mode.png
+[landing-screenshot]:https://github.com/Shashwath-K/Python_auto_documenter/blob/main/images/landing_page.png
+[live-screenshot]: https://github.com/Shashwath-K/Python_auto_documenter/blob/main/images/live_mode.png
+[repo-screenshot]: https://github.com/Shashwath-K/Python_auto_documenter/blob/main/images/repo_mode.png
 
 [FastAPI]: https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi
 [FastAPI-url]: https://fastapi.tiangolo.com/
