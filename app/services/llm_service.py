@@ -1,4 +1,6 @@
 import logging
+import asyncio
+from ollama import AsyncClient
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -101,10 +103,11 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
     
     if settings.LLM_PROVIDER == "ollama":
         try:
-            import ollama
-            response = ollama.chat(model=settings.OLLAMA_MODEL, messages=[
-                {'role': 'user', 'content': prompt}
-            ])
+            client = AsyncClient()
+            response = await asyncio.wait_for(
+                client.chat(model=settings.OLLAMA_MODEL, messages=[{'role': 'user', 'content': prompt}]),
+                timeout=60.0
+            )
             docstring = response['message']['content'].strip()
             
             # Clean up potential markdown formatting
@@ -122,11 +125,13 @@ async def generate_docstring(code_snippet: str, is_inline: bool = False, languag
             
             return docstring
             
+        except asyncio.TimeoutError:
+            logger.error("Ollama timeout during docstring generation")
+            return "Error: Generation timed out."
         except Exception as e:
             logger.error(f"Error calling Ollama: {e}")
             return f"Error generating docstring: {e}"
     else:
-        # Dummy implementation if not using local ollama
         return "This is a dummy PEP 257 compliant docstring generated because Ollama is not available or configured."
 
 async def explain_code(code_snippet: str, user_query: str = None) -> str:
@@ -163,11 +168,15 @@ async def explain_code(code_snippet: str, user_query: str = None) -> str:
         
     if settings.LLM_PROVIDER == "ollama":
         try:
-            import ollama
-            response = ollama.chat(model=settings.OLLAMA_MODEL, messages=[
-                {'role': 'user', 'content': prompt}
-            ])
+            client = AsyncClient()
+            response = await asyncio.wait_for(
+                client.chat(model=settings.OLLAMA_MODEL, messages=[{'role': 'user', 'content': prompt}]),
+                timeout=60.0
+            )
             return response['message']['content'].strip()
+        except asyncio.TimeoutError:
+            logger.error("Ollama timeout during code explanation")
+            return "Error: Generation timed out."
         except Exception as e:
             logger.error(f"Error calling Ollama for explanation: {e}")
             return f"Error generating explanation: {e}"
@@ -342,11 +351,15 @@ async def generate_ai_summary(code: str, language: str = "python", filename: str
 
     if settings.LLM_PROVIDER == "ollama":
         try:
-            import ollama
-            response = ollama.chat(model=settings.OLLAMA_MODEL, messages=[
-                {'role': 'user', 'content': prompt}
-            ])
+            client = AsyncClient()
+            response = await asyncio.wait_for(
+                client.chat(model=settings.OLLAMA_MODEL, messages=[{'role': 'user', 'content': prompt}]),
+                timeout=300.0
+            )
             return response['message']['content'].strip()
+        except asyncio.TimeoutError:
+            logger.error("Ollama timeout during AI summary generation")
+            return "## ⚠️ Error\n\n> Failed to generate AI summary: Request timed out (300s limit)."
         except Exception as e:
             logger.error(f"Error calling Ollama for AI summary: {e}")
             return f"## ⚠️ Error\n\n> Failed to generate AI summary: {e}"
