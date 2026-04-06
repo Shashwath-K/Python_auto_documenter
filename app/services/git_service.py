@@ -63,7 +63,7 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
         job["status"] = "scanning"
         job["current_file"] = "Scanning for code files..."
         
-        valid_extensions = {".py", ".js", ".jsx", ".ts", ".tsx", ".html", ".css", ".cpp", ".c", ".java"}
+        valid_extensions = {".py"}
         blacklist_dirs = {"node_modules", "venv", ".git", "dist", "build", "__pycache__", ".next"}
         
         target_files = []
@@ -92,60 +92,16 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
         
         for file_path in target_files:
             rel_path = os.path.relpath(file_path, extract_path)
-            job["current_file"] = rel_path
             
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     code = f.read()
                     
                 ext = os.path.splitext(file_path)[1].lower()
-                lang = "python"
-                if ext in {".js", ".jsx"}: lang = "javascript"
-                elif ext in {".ts", ".tsx"}: lang = "typescript"
-                elif ext == ".html": lang = "html"
-                elif ext == ".css": lang = "css"
-                elif ext in {".cpp", ".c"}: lang = "cpp"
-                elif ext == ".java": lang = "java"
+                lang = "python" # We now only target python files anyway
                 
                 # Extract symbols natively
-                if lang == "python":
-                    symbols = extract_functions_and_classes(code, doc_level)
-                elif lang == "ipynb":
-                    symbols = []
-                    try:
-                        notebook = json.loads(code)
-                        for i, cell in enumerate(notebook.get("cells", [])):
-                            if cell.get("cell_type") == "code":
-                                source = cell.get("source", "")
-                                if isinstance(source, list):
-                                    source = "".join(source)
-                                if source.strip():
-                                    symbols.append({
-                                        "name": f"Notebook Cell {i}",
-                                        "type": "CodeCell",
-                                        "start_line": 1,
-                                        "insert_line": 1,
-                                        "indentation": "",
-                                        "snippet": source,
-                                        "is_inline": False,
-                                        "full_replace": True,
-                                        "is_ipynb_cell": True,
-                                        "is_markdown_cell": False,
-                                        "cell_index": i
-                                    })
-                    except Exception as e:
-                        print(f"Failed to parse ipynb JSON: {e}")
-                else:
-                    symbols = [{
-                        "name": f"{lang.upper()} File",
-                        "type": "RawBlock",
-                        "start_line": 1,
-                        "insert_line": 1,
-                        "indentation": "",
-                        "snippet": code,
-                        "is_inline": False,
-                        "full_replace": True
-                    }]
+                symbols = extract_functions_and_classes(code, doc_level)
                 
                 if symbols:
                     # Modify code bottom-up
@@ -154,15 +110,10 @@ async def process_repo_background(session_id: str, zip_path: str, extract_path: 
                     
                     code_lines = modified_code.split("\n")
                     
-                    # For IPYNB, we edit the JSON object directly
-                    notebook_obj = None
-                    if lang == "ipynb":
-                        try:
-                            notebook_obj = json.loads(code)
-                        except:
-                            pass
-                    
-                    for sym in symbols:
+                    for i, sym in enumerate(symbols):
+                        # Update progress for the specific symbol being processed
+                        job["current_file"] = f"[{i+1}/{len(symbols)}] {sym['name']} in {rel_path}"
+                        
                         raw_docstring = await generate_docstring(
                             sym["snippet"],
                             is_inline=sym.get("is_inline", False),
