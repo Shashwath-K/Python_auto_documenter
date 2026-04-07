@@ -1,195 +1,215 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
 
-<!-- PROJECT LOGO -->
-<br />
 <div align="center">
-  <a href="https://github.com/Shashwath-K/Python_auto_documenter">
-    <img src="images\autodoc_logo.png" alt="Logo" width="120" height="120">
-  </a>
 
-  <h3 align="center">AutoDoc AI</h3>
+<img src="images/autodoc_logo.png" alt="Logo" width="120" height="120">
 
-  <p align="center">
-    A Semantic-Aware File Converter and Documentation Engine powered by Local LLMs.
-    <br />
-    <a href="https://github.com/Shashwath-K/Python_auto_documenter"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="http://127.0.0.1:8000">View Demo</a>
-    &middot;
-    <a href="https://github.com/Shashwath-K/Python_auto_documenter/issues">Report Bug</a>
-    &middot;
-    <a href="https://github.com/Shashwath-K/Python_auto_documenter/issues">Request Feature</a>
-  </p>
+<h1>AutoDoc AI</h1>
+<p><strong>Semantic-Aware File Converter & Automatic Documentation Engine</strong></p>
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-REST%20API-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-000000?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com)
+[![Unlicense License](https://img.shields.io/badge/License-Unlicense-blue.svg?style=for-the-badge)](https://unlicense.org)
+
 </div>
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+---
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+## ![Objectives](https://img.shields.io/badge/-Project%20Objectives-blue?style=flat-square&logo=target)
 
-AutoDoc AI is a sophisticated automation platform designed to bridge the gap between complex source code and professional documentation. By leveraging local Large Language Models (via Ollama), it provides real-time intelligent code analysis, automated docstring generation, and high-fidelity project reporting.
+AutoDoc AI is designed to revolutionize the way developers maintain and present their codebases by automating the most tedious parts of software development: documentation and reporting.
 
-### Key Features:
-* **Live Generation Editor**: Type code and watch as the AI contextually understands and documents your functions and classes in real-time.
-* **Repository Processing**: Upload an entire project as a ZIP file. The system scans the codebase, analyzes every module, and generates a fully documented version.
-* **Semantic-Aware Conversion**: Convert raw source code or notebooks into professional, themed PDF and DOCX reports with automated AI summaries.
-* **RPA-Powered "Ghost Typing"**: Experience documentation being typed directly into your editor using background automation.
+### Objective 1 — Automate Docstring Generation
+Leverage local Large Language Models (LLMs) to analyze code context and automatically generate high-quality Python docstrings. The system uses background RPA (Ghost Typing) to insert documentation directly into the active editor or in-place via the web interface.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### Objective 2 — Transform Repositories Semantically
+Enable high-volume project documentation by processing entire `.zip` repositories. The engine recursively scans deep directory structures, applies semantic analysis to every module, and produces a fully "documented" version of the codebase while preserving the original logic.
 
-### Built With
+### Objective 3 — Professional Automated Reporting
+Convert raw source code, Markdown files, or Jupyter Notebooks (`.ipynb`) into professional PDF and DOCX reports. These reports feature automated **AI Summaries** that describe complexity, project scope, and learning paths, making them ideal for academic submissions or project handovers.
 
-This project is built using a powerful stack of modern web and automation technologies:
+---
 
-* [![FastAPI][FastAPI]][FastAPI-url]
-* [![Python][Python]][Python-url]
-* [![Ollama][Ollama]][Ollama-url]
-* [![Jinja2][Jinja2]][Jinja2-url]
-* [![ReportLab][ReportLab]][ReportLab-url]
+## ![Architecture](https://img.shields.io/badge/-Architecture%20Overview-blue?style=flat-square&logo=gitkraken)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```
+AutoDoc AI Suite
+│
+├── Backend (app/)                 ← FastAPI core and background services
+│   ├── api/                       ← REST API endpoints for all tools
+│   ├── services/                  ← LLM, RPA, Parser, and Git processing logic
+│   ├── pdf_converter/             ← Native report generation (PDF/DOCX)
+│   └── templates/                 ← Jinja2-powered dynamic frontend engine
+│
+├── Frontend (static/)             ← Advanced CSS/JS client interface
+│   └── components/                ← Modular UI cards, bars, and layouts
+│
+└── Conversion Pipeline            ← Native Markdown to Document flow
+```
 
-<!-- GETTING STARTED -->
-## Getting Started
+### Data Flow
 
-To get a local copy up and running, follow these simple steps.
+```
+Raw Code / .zip Repo
+    │
+    ▼
+[Parser Service]  ──extract──▶  Functions, Classes, & Metadata
+    │
+    ▼
+[LLM Heuristic Engine]  ──analyze──▶  Semantic Context (llama3.2)
+    │
+    ▼
+[DocGen / RPA Service]  ──insert──▶  Documented Code
+    │
+    ▼
+[Document Converter]  ──render──▶  Professional PDF / DOCX
+```
+
+---
+
+## ![Tech Stack](https://img.shields.io/badge/-Technology%20Stack-blue?style=flat-square&logo=codeforces)
+
+### Core Backend & AI
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Language | Python 3.10+ | Primary application runtime |
+| Web Framework | `FastAPI` | High-performance asynchronous API |
+| LLM Provider | `Ollama` | Local hosting of llama3.2 inference model |
+| RPA Engine | `PyAutoGUI` | Automated "Ghost Typing" of docstrings |
+| PDF Generation | `ReportLab` | Native high-fidelity PDF rendering |
+| DOCX Generation | `python-docx` | Native Microsoft Word document assembly |
+
+### Web Interface & Templating
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Templating | Jinja2 | Dynamic HTML generation and partials |
+| Styling | Vanilla CSS | Custom modern dark-themed aesthetics |
+| Interaction | JavaScript | Real-time websocket-style updates and UI logic |
+| Static Files | StaticFiles | Managed delivery of CSS/JS/Image assets |
+
+---
+
+## ![Structure](https://img.shields.io/badge/-Project%20Structure-blue?style=flat-square&logo=files)
+
+```
+combine_auto_doc/
+│
+├── 📂 app/
+│   ├── 📂 api/                # FastAPI routers and endpoints
+│   ├── 📂 core/               # App configuration and global settings
+│   ├── 📂 pdf_converter/      # PDF/DOCX conversion logic & templates
+│   ├── 📂 services/           # LLM, Git, Parser, and RPA services
+│   ├── 📂 static/             # CSS components and client-side assets
+│   ├── 📂 templates/          # Jinja2 HTML templates for all modes
+│   └── main.py                # Main application entry point
+│
+├── 📂 client/
+│   └── listener.py            # Local agent for RPA hotkey listening
+│
+├── 📂 images/                 # Product screenshots and brand assets
+│
+├── 📂 merged_app/             # Consolidated logic for standalone deployment
+│
+├── 📂 project documents/      # External documentation and project briefs
+│
+├── 📂 temp_repos/             # Working directory for ZIP repo processing
+│
+├── 📂 tests/                  # Unit and integration testing suites
+│
+├── requirements.txt           # Python dependency manifest
+└── README.md                  # This file
+```
+
+---
+
+## ![Quick Start](https://img.shields.io/badge/-Quick%20Start-green?style=flat-square&logo=rocket)
 
 ### Prerequisites
 
-* **Python 3.10+**
-* **Ollama** (Running locally with `llama3.2` or equivalent)
-  ```sh
-  ollama run llama3.2
-  ```
+```bash
+# Python 3.10 or higher required
+python --version
 
-### Installation
+# Ollama required (running llama3.2)
+ollama run llama3.2
+```
 
-1. Clone the repo
-   ```sh
-   git clone https://github.com/Shashwath-K/Python_auto_documenter.git
-   ```
-2. Create and activate a virtual environment
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-3. Install dependencies
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. Run the application
-   ```sh
-   uvicorn app.main:app --reload
-   ```
+### 1. Setup Environment
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```bash
+# Clone the repository
+git clone https://github.com/Shashwath-K/Python_auto_documenter.git
+cd combine_auto_doc
 
-<!-- USAGE EXAMPLES -->
-## Usage
+# Install dependencies
+pip install -r requirements.txt
+```
 
-### 1. Landing Page
-The central hub where you can choose between different automation modes: Live Editor, Upload Mode, or Repository Mode.
-![Landing Screenshot][landing-screenshot]
+### 2. Launch the Application
+
+```bash
+# Start the FastAPI server
+uvicorn app.main:app --reload
+```
+
+The application will be accessible at `http://127.0.0.1:8000`.
+
+### 3. Run the Client Listener (Optional for RPA)
+
+```bash
+# Start the background hotkey listener
+python client/listener.py
+```
+
+---
+
+## ![Output](https://img.shields.io/badge/-Output%20Examples-blue?style=flat-square&logo=chart-dot)
+
+### 1. Project Dashboard
+The central hub for all documentation modes featuring a professional dark UI.
+![Landing Page](images/landing_page.png)
 
 ### 2. Live Generation Editor
-The most powerful mode for developers. It features a real-time editor that identifies "undocumented" items and offers one-click AI generation.
-![Live Editor Screenshot][live-screenshot]
+Real-time code analysis with semantic-aware docstring insertion.
+![Live Editor](images/live_mode.png)
 
-### 3. Repository Mode
-Process entire codebases at once. Download a documented version of your project in seconds.
-![Repo Mode Screenshot][repo-screenshot]
+### 3. Repository Documentation
+Scan, process, and download entire projects with automated documentation.
+![Repo Mode](images/repo_mode.png)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
-<!-- ROADMAP -->
-## Roadmap
+## ![Roadmap](https://img.shields.io/badge/-Project%20Roadmap-blue?style=flat-square&logo=road)
 
-- [x] Initial release of Live Editor
-- [x] ZIP Repository Processing
-- [x] PDF/DOCX Export with AI Summary
-- [ ] Multi-model LLM support (OpenAI, Anthropic)
-- [ ] Direct VS Code Plugin Integration
-- [ ] GitHub Actions for automated documentation on PRs
+- [x] **v1.0**: Live Editor and individual file upload.
+- [x] **v1.1**: Repository Mode (.zip support) and Native PDF/DOCX.
+- [x] **v1.2**: AI-Generated Summary Reports (Complexity & Insights).
+- [ ] **v2.0**: Direct VS Code Extension integration.
+- [ ] **v2.1**: Support for multi-language LLM analysis (Go, Rust, etc.).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
-<!-- CONTRIBUTING -->
-## Contributing
+## ![Internal Logic](https://img.shields.io/badge/-Internal%20Logic-blue?style=flat-square&logo=testify)
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+### Step 1 — Semantic Parsing
+`services/parser_service.py` uses Abstract Syntax Trees (AST) to identify functions, classes, and method signatures that lack documentation.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+### Step 2 — LLM Generation
+The parsed code chunks are sent to the `llm_service.py`, which prompts the local Ollama instance. It generates docstrings that match the code's logic, parameters, and return types.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### Step 3 — RPA Ghost Typing
+For real-time insertion, `services/rpa_service.py` uses keyboard automation to "type" the generated docstrings directly into your source file without manual copy-pasting.
 
-<!-- LICENSE -->
-## License
+### Step 4 — Document Assembly
+`pdf_converter/` modules take the documented markdown or notebooks and render them into professional reports using distinct theme templates (Classic, Modern, etc.).
+
+---
+
+## ![License](https://img.shields.io/badge/-License-blue?style=flat-square&logo=read-the-docs)
 
 Distributed under the Unlicense License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTACT -->
-## Contact
-
-Shashwath K - [@shashwath_k15](https://twitter.com/shashwath_k15) - [Email](shashwathkukkunoor@outlook.com)
-
-Project Link: [https://github.com/Shashwath-K/Python_auto_documenter](https://github.com/Shashwath-K/Python_auto_documenter)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* [Ollama](https://ollama.com) for local LLM inferencing
-* [FastAPI](https://fastapi.tiangolo.com/) for the high-performance backend
-* [ReportLab](https://www.reportlab.com/) for PDF generation
-* [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- MARKDOWN LINKS & IMAGES -->
-[landing-screenshot]:images\landing_page.png
-[live-screenshot]: images\live_mode.png
-[repo-screenshot]: images\repo_mode.png
-
-[FastAPI]: https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi
-[FastAPI-url]: https://fastapi.tiangolo.com/
-[Python]: https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white
-[Python-url]: https://www.python.org/
-[Ollama]: https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white
-[Ollama-url]: https://ollama.com/
-[Jinja2]: https://img.shields.io/badge/Jinja2-B41717?style=for-the-badge&logo=jinja&logoColor=white
-[Jinja2-url]: https://jinja.palletsprojects.com/
-[ReportLab]: https://img.shields.io/badge/ReportLab-FFD43B?style=for-the-badge&logo=pypi&logoColor=blue
-[ReportLab-url]: https://www.reportlab.com/
