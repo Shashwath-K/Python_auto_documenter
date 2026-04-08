@@ -3,47 +3,76 @@
 {% block title %}Landing - Semantic-Aware File Converter with Automatic Documentation Generation Using Local LLM{% endblock %}
 
 {% block content %}
-<h1>Documentation Automation</h1>
-<p>Select an automation mode below:</p>
-
-<div class="tools-grid">
-    <!-- Live Editor Mode -->
-    <a href="/live-mode" class="tool-card card-live">
-        <div class="card-main">
-            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-            </svg>
-            <div class="tool-title">Live Editor</div>
-            <p class="tool-desc">Real-time code documentation and analysis.</p>
+<section class="landing-hero">
+    <div class="hero-copy">
+        <p class="hero-eyebrow">Local-first documentation engine</p>
+        <h1>Run inspections, conversions, and documentation without leaving your terminal.</h1>
+        <p>Combine live analysis, file uploads, and repository scanning into one unified workflow powered by
+            local LLM nodes and Ollama-managed inference.</p>
+        <div class="hero-actions">
+            <a class="btn-primary" href="/live-mode">Launch Live Mode</a>
+            <a class="btn-secondary" href="/upload-mode">Upload a file</a>
         </div>
-    </a>
-
-    <!-- Upload Mode -->
-    <a href="/upload-mode" class="tool-card card-upload">
-        <div class="card-main">
-            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            <div class="tool-title">Upload File</div>
-            <p class="tool-desc">Process and convert individual source files.</p>
-        </div>
-    </a>
-
-    <!-- Repository Mode -->
-    <div class="tool-card card-repo coming-soon">
-        <div class="card-main">
-            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <div class="tool-title">Repository Mode</div>
-            <p class="tool-desc">Scan entire Git repositories for documentation.</p>
-            <span class="status-badge">Coming Soon</span>
+        <div class="hero-meta">
+            <div class="hero-stat">
+                <strong>3 min</strong>
+                <span>Avg. doc build time</span>
+            </div>
+            <div class="hero-stat">
+                <strong>24/7</strong>
+                <span>Secure local inference</span>
+            </div>
+            <div class="hero-stat">
+                <strong>8K+</strong>
+                <span>Code samples processed</span>
+            </div>
         </div>
     </div>
-</div>
+    <div class="hero-panel">
+        <p class="hero-panel-title">Orchestrate every workflow</p>
+        <ul class="hero-panel-list">
+            <li>Live editor mode for real-time analysis and inline explanations.</li>
+            <li>Upload mode for one-off conversions with customizable rules.</li>
+            <li>Repository mode (coming soon) for scanning full projects.</li>
+            <li>Automatic docs, changelog drafts, and design notes delivered by trusted nodes.</li>
+        </ul>
+        <div class="hero-panel-footnote">Infrastructure: Ollama node + local LLM assets.</div>
+    </div>
+</section>
+
+<section class="landing-details">
+    <div class="detail-header">
+        <h2>How the automation flows work</h2>
+        <p>Select the experience that matches your current milestone.</p>
+    </div>
+
+    <div class="detail-grid">
+        <article class="detail-item">
+            <h3>Live mode</h3>
+            <p>Interact with a live editor that highlights documentation gaps, generates inline descriptions, and
+                lets you push insights back into your workspace.</p>
+            <p class="detail-meta">Realtime connection · Local inference · IDE-like feel</p>
+        </article>
+
+        <article class="detail-item">
+            <h3>Upload mode</h3>
+            <p>Drop in a single file or snippet, choose a target format, and receive cleaned, documented output with
+                traceable prompts.</p>
+            <p class="detail-meta">Rule-driven conversions · Format presets · Traceable history</p>
+        </article>
+
+        <article class="detail-item">
+            <h3>Repository mode (preview)</h3>
+            <p>Queue an entire Git repo for scanning, capture doc holes, and receive an automated documentation
+                project once it ships.</p>
+            <p class="detail-meta">Tree scanning · Citation export · Coming soon</p>
+        </article>
+    </div>
+</section>
+
+<section class="landing-notes">
+    <p>Need bespoke automation? Reach out via the workspace controls and we can tailor the pipelines to your stack.</p>
+</section>
 {% endblock %}
 
 {% block sidebar %}
