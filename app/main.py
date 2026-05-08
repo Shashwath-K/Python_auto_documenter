@@ -11,11 +11,12 @@ app = FastAPI(title=settings.PROJECT_NAME)
 app.include_router(api_router, prefix="/api")
 
 # Ensure templates and static directories exist
-os.makedirs("app/templates", exist_ok=True)
-os.makedirs("app/static", exist_ok=True)
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+os.makedirs(os.path.join(BASE_DIR, "templates"), exist_ok=True)
+os.makedirs(os.path.join(BASE_DIR, "static"), exist_ok=True)
 
-templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 @app.get("/")
 async def landing(request: Request):
@@ -56,4 +57,4 @@ async def repo_mode(request: Request):
 if __name__ == "__main__":
     import uvicorn
     # Make sure to run this file from the project root!
-    uvicorn.run("app.main:app", host=settings.HOST, port=settings.PORT, reload=True)
+    uvicorn.run("app.main:app", host=settings.HOST, port=settings.PORT, reload=False)
