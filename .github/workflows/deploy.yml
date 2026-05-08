@@ -55,6 +55,5 @@ jobs:
         env:
           KOYEB_TOKEN: ${{ secrets.KOYEB_TOKEN }}
         run: |
-          # Replace 'python-auto-documenter' with your preferred Koyeb service name
           # This command will update the service to use the newly pushed image
-          koyeb service update python-auto-documenter/auto-doc-service --docker ghcr.io/${{ github.repository }}:main
+          koyeb service update giant-leslie/python-auto-documenter --docker ghcr.io/${{ github.repository }}:main
