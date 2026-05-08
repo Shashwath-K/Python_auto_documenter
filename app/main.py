@@ -23,36 +23,50 @@ async def landing(request: Request):
     """
     Renders the landing page.
     """
-    return templates.TemplateResponse("landing.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request, 
+        name="landing.html", 
+        context={"request": request}
+    )
 
 @app.get("/upload-mode")
 async def upload_mode(request: Request):
     """
     Renders the file upload tool, passing reversed history (latest first).
     """
-    return templates.TemplateResponse("upload_mode.html", {
-        "request": request,
-        "history": list(reversed(history))
-    })
+    return templates.TemplateResponse(
+        request=request, 
+        name="upload_mode.html", 
+        context={
+            "request": request,
+            "history": list(reversed(history))
+        }
+    )
 
 @app.get("/live-mode")
 async def live_mode(request: Request):
     """
     Renders the live generation editor tool.
     """
-    return templates.TemplateResponse("live_mode.html", {
-        "request": request,
-        "history": list(reversed(history)) # We can share the same history or omit it
-    })
+    return templates.TemplateResponse(
+        request=request, 
+        name="live_mode.html", 
+        context={
+            "request": request,
+            "history": list(reversed(history))
+        }
+    )
 
 @app.get("/repo-mode")
 async def repo_mode(request: Request):
     """
     Renders the Repository Upload & Processing tool.
     """
-    return templates.TemplateResponse("repo_mode.html", {
-        "request": request
-    })
+    return templates.TemplateResponse(
+        request=request, 
+        name="repo_mode.html", 
+        context={"request": request}
+    )
 
 if __name__ == "__main__":
     import uvicorn
