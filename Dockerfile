@@ -33,4 +33,4 @@ RUN mkdir -p app/static app/templates
 EXPOSE 8000
 
 # Command to run the application using the dynamic $PORT environment variable
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
+CMD ["python", "-m", "app.main"]
