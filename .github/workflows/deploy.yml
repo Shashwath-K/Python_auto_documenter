@@ -61,4 +61,4 @@ jobs:
           KOYEB_TOKEN: ${{ secrets.KOYEB_TOKEN }}
         run: |
           # Use the lowercase image name
-          koyeb service update giant-leslie/python-auto-documenter --docker ghcr.io/${{ env.IMAGE_NAME_LOWER }}:main
+          koyeb service update integral-staci/python-auto-documenter --docker ghcr.io/${{ env.IMAGE_NAME_LOWER }}:main
