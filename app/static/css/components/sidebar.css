@@ -19,19 +19,15 @@
     height: 100%;
     background-color: var(--bg-secondary);
     border-left: 1px solid var(--border-color);
-    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
-    padding: 2rem;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    padding: 1.5rem; /* Reduced from 2rem */
     overflow-y: auto;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-
-    /* Hide scrollbar */
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
+    gap: 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
 }
 
 .sidebar-right::-webkit-scrollbar {
@@ -101,7 +97,8 @@
 }
 
 .widget-card {
-    padding: 1rem;
+    padding: 1.25rem; /* Specific padding for sidebar widgets */
+    margin-bottom: 0;
 }
 
 
