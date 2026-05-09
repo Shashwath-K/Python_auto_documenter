@@ -17,14 +17,19 @@
 <body>
     <header class="app-header">
         <div class="header-container">
-            <div class="header-brand">
-                <h1 class="app-title">Semantic-Aware File Converter with Automatic Documentation Generation Using Local LLM</h1>
-            </div>
-            <div class="header-tagline">Professional Automation Engine</div>
+            <a href="/" class="header-brand">
+                <div class="brand-icon">◈</div>
+                <h1 class="app-title">SemanticFlow</h1>
+            </a>
+            <nav class="header-nav">
+                <a href="/live-mode" class="nav-link">Live Mode</a>
+                <a href="/upload-mode" class="nav-link">File Upload</a>
+                <a href="/repo-mode" class="nav-link">Repo Scan</a>
+            </nav>
         </div>
     </header>
 
-    <div class="layout-body">
+    <div class="layout-body {% block layout_class %}{% endblock %}">
         <main class="main-content">
             {% block content %}{% endblock %}
         </main>
@@ -50,7 +55,9 @@
     </div>
 
     <footer class="app-footer">
-        Semantic-Aware File Converter with Automatic Documentation Generation Using Local LLM &copy; 2026. Local Infrastructure: Ollama Node.
+        <div class="footer-container">
+            <p>&copy; 2026 SemanticFlow. Powered by local LLM nodes via Ollama.</p>
+        </div>
     </footer>
 
     <!-- Page Specific Scripts -->

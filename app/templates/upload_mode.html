@@ -20,7 +20,7 @@
     <hr>
 
     <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; gap: 1rem; align-items: center;">
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
             <button onclick="document.getElementById('fileInput').click()" class="btn-primary">Upload File</button>
             <select id="docLevelSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
                 <option value="minimum">Docs: Low (30% density)</option>
@@ -87,7 +87,7 @@
                 { token: 'comment.doc', foreground: '85c46c' },
             ],
             colors: {
-                'editor.background': '#020617', // Match --bg-primary (Slate 950)
+                'editor.background': '#050505', // Match --bg-primary
             }
         });
 

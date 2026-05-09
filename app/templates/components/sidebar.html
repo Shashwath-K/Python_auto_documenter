@@ -95,7 +95,11 @@
     }
 
     document.getElementById('sidebarToggleBtn').addEventListener('click', function () {
-        sidebar.classList.toggle('collapsed');
+        const isCollapsed = sidebar.classList.toggle('collapsed');
         layoutBody.classList.toggle('sidebar-collapsed');
+        
+        // Update icon based on state
+        const icon = document.querySelector('.sidebar-toggle-icon');
+        icon.innerText = isCollapsed ? '◀' : '▶';
     });
 </script>

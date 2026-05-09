@@ -1,80 +1,93 @@
 {% extends "base.html" %}
 
-{% block title %}Landing - Semantic-Aware File Converter with Automatic Documentation Generation Using Local LLM{% endblock %}
+{% block title %}SemanticFlow - Intelligent Documentation & Code Conversion{% endblock %}
+
+{% block layout_class %}no-sidebar{% endblock %}
 
 {% block content %}
-<section class="landing-hero">
-    <div class="hero-copy">
-        <p class="hero-eyebrow">Local-first documentation engine</p>
-        <h1>Run inspections, conversions, and documentation without leaving your terminal.</h1>
-        <p>Combine live analysis, file uploads, and repository scanning into one unified workflow powered by
-            local LLM nodes and Ollama-managed inference.</p>
+<div class="landing-container">
+    <div class="hero-visual-anchor"></div>
+    
+    <section class="hero-section">
+        <p class="hero-eyebrow">Local-first automation</p>
+        <h1>Crafting documentation with semantic intelligence.</h1>
+        <p>A professional-grade engine for live analysis, seamless file conversions, and repository-scale documentation—all running securely on your local hardware.</p>
         <div class="hero-actions">
             <a class="btn-primary" href="/live-mode">Launch Live Mode</a>
-            <a class="btn-secondary" href="/upload-mode">Upload a file</a>
+            <a class="btn-secondary" href="/upload-mode">Upload a File</a>
         </div>
-        <div class="hero-meta">
-            <div class="hero-stat">
-                <strong>3 min</strong>
-                <span>Avg. doc build time</span>
-            </div>
-            <div class="hero-stat">
-                <strong>24/7</strong>
-                <span>Secure local inference</span>
-            </div>
-            <div class="hero-stat">
-                <strong>8K+</strong>
-                <span>Code samples processed</span>
-            </div>
-        </div>
-    </div>
-    <div class="hero-panel">
-        <p class="hero-panel-title">Orchestrate every workflow</p>
-        <ul class="hero-panel-list">
-            <li>Live editor mode for real-time analysis and inline explanations.</li>
-            <li>Upload mode for one-off conversions with customizable rules.</li>
-            <li>Repository mode (coming soon) for scanning full projects.</li>
-            <li>Automatic docs, changelog drafts, and design notes delivered by trusted nodes.</li>
-        </ul>
-        <div class="hero-panel-footnote">Infrastructure: Ollama node + local LLM assets.</div>
-    </div>
-</section>
+    </section>
 
-<section class="landing-details">
-    <div class="detail-header">
-        <h2>How the automation flows work</h2>
-        <p>Select the experience that matches your current milestone.</p>
-    </div>
-
-    <div class="detail-grid">
-        <article class="detail-item">
-            <h3>Live mode</h3>
-            <p>Interact with a live editor that highlights documentation gaps, generates inline descriptions, and
-                lets you push insights back into your workspace.</p>
-            <p class="detail-meta">Realtime connection · Local inference · IDE-like feel</p>
+    <div class="feature-flow">
+        <article class="feature-item">
+            <div class="feature-content">
+                <h3>Live Intelligence</h3>
+                <p>Experience real-time code analysis that breathes life into your source files. Our live editor identifies documentation gaps, suggests improvements, and generates precise technical descriptions as you work.</p>
+                <div style="margin-top: 1.5rem;">
+                    <a href="/live-mode" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Explore Live Mode</a>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <!-- Visual touch: Subtle glowing icon or abstract shape -->
+                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3;">◈</div>
+            </div>
         </article>
 
-        <article class="detail-item">
-            <h3>Upload mode</h3>
-            <p>Drop in a single file or snippet, choose a target format, and receive cleaned, documented output with
-                traceable prompts.</p>
-            <p class="detail-meta">Rule-driven conversions · Format presets · Traceable history</p>
+        <article class="feature-item">
+            <div class="feature-content">
+                <h3>Precision Conversion</h3>
+                <p>Transform technical snippets or entire files across formats with semantic awareness. Preserve context and meaning while leveraging local LLM nodes for rule-driven, traceable output.</p>
+                <div style="margin-top: 1.5rem;">
+                    <a href="/upload-mode" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Try Uploads</a>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3; color: var(--accent-secondary);">✦</div>
+            </div>
         </article>
 
-        <article class="detail-item">
-            <h3>Repository mode (preview)</h3>
-            <p>Queue an entire Git repo for scanning, capture doc holes, and receive an automated documentation
-                project once it ships.</p>
-            <p class="detail-meta">Tree scanning · Citation export · Coming soon</p>
+        <article class="feature-item">
+            <div class="feature-content">
+                <h3>Project Scanning</h3>
+                <p>Map out entire repositories to identify "dark spots" in your documentation. Generate comprehensive project overviews, changelogs, and design notes automatically.</p>
+                <p style="color: var(--accent-primary); font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">Currently in Preview</p>
+            </div>
+            <div class="feature-visual">
+                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3;">⚓</div>
+            </div>
         </article>
     </div>
-</section>
 
-<section class="landing-notes">
-    <p>Need bespoke automation? Reach out via the workspace controls and we can tailor the pipelines to your stack.</p>
-</section>
+    <section style="margin-top: 8rem; text-align: center; padding-bottom: 4rem;">
+        <p style="font-size: 0.875rem; color: var(--text-secondary);">Infrastructure powered by Ollama managed nodes. All data remains local.</p>
+    </section>
+</div>
 {% endblock %}
 
 {% block sidebar %}
-<!-- Override the sidebar block to leave it empty on the landing page -->
+<!-- Landing page uses a full-width layout -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Subtle parallax or entrance animations could be added here
+    document.addEventListener('DOMContentLoaded', () => {
+        const items = document.querySelectorAll('.feature-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        items.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(30px)';
+            item.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(item);
+        });
+    });
+</script>
 {% endblock %}
