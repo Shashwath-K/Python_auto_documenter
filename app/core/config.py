@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     LLM_PROVIDER: str = "ollama"  # Options 'ollama' or 'dummy'
-    OLLAMA_MODEL: str = "llama3.2" # Adjust according to the local model you have
+    OLLAMA_MODEL: str = "llama3.2:3b" # Adjust according to the local model you have
 
     class Config:
         env_file = ".env"
