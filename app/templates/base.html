@@ -55,11 +55,162 @@
         </div>
     </div>
 
+    <!-- NLP Preprocessing Inspector Modal -->
+    <div id="nlpModal" class="modal-backdrop">
+        <div class="modal-content" style="max-width: 650px; max-height: 85vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.25rem;">🔬</span>
+                    <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">NLTK Text Preprocessing Inspector</h3>
+                </div>
+                <button onclick="closeNlpInspector()" class="icon-btn-small" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.25rem;">&times;</button>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                Inspect tokenization, stopword filtration, lemmatization, and lexical diversity metrics computed directly from the current editor document using NLTK.
+            </p>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                <button id="modalBtnComments" onclick="runModalNlp('comments')" class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Comments & Docstrings Only</button>
+                <button id="modalBtnFull" onclick="runModalNlp('raw')" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Full Document</button>
+            </div>
+
+            <div id="nlpModalLoading" style="display: none; text-align: center; padding: 2rem;">
+                <div class="premium-spinner" style="margin: 0 auto 0.75rem auto;"></div>
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Processing with NLTK pipelines...</span>
+            </div>
+
+            <div id="nlpModalContent" style="display: none; flex-direction: column; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; text-align: center; background: rgba(0,0,0,0.4); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 700; color: #38bdf8;" id="modalRawTokens">0</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase;">Raw Tokens</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 700; color: #10b981;" id="modalFilteredTokens">0</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase;">Filtered</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 700; color: #f59e0b;" id="modalStopwords">0</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase;">Stopwords</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 700; color: #a855f7;" id="modalDiversity">0.0</div>
+                        <div style="font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase;">Diversity</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.5rem;">Top Extracted Domain Terminology</h4>
+                    <div id="modalKeywords" style="display: flex; flex-wrap: wrap; gap: 0.4rem;"></div>
+                </div>
+
+                <div>
+                    <h4 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.5rem;">Processed Tokens Sample</h4>
+                    <div id="modalTokensPreview" style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: monospace; font-size: 0.8rem; max-height: 120px; overflow-y: auto; color: #cbd5e1; word-break: break-word;"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <button onclick="closeNlpInspector()" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="app-footer">
         <div class="footer-container">
             <p>&copy; 2026 SemanticFlow. Powered by local LLM nodes via Ollama.</p>
         </div>
     </footer>
+
+    <script>
+        function openNlpInspector() {
+            const modal = document.getElementById('nlpModal');
+            if (modal) {
+                modal.classList.add('active');
+                runModalNlp('comments');
+            }
+        }
+
+        function closeNlpInspector() {
+            const modal = document.getElementById('nlpModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        async function runModalNlp(mode) {
+            let textToAnalyze = "";
+            if (typeof editor !== 'undefined' && editor && typeof editor.getValue === 'function') {
+                textToAnalyze = editor.getValue();
+            }
+            if (!textToAnalyze || !textToAnalyze.trim()) {
+                alert('Please load or type code into the editor first.');
+                return;
+            }
+
+            const loading = document.getElementById('nlpModalLoading');
+            const content = document.getElementById('nlpModalContent');
+            const btnFull = document.getElementById('modalBtnFull');
+            const btnComments = document.getElementById('modalBtnComments');
+
+            if (mode === 'raw') {
+                btnFull.className = 'btn-primary';
+                btnComments.className = 'btn-secondary';
+            } else {
+                btnFull.className = 'btn-secondary';
+                btnComments.className = 'btn-primary';
+            }
+
+            loading.style.display = 'block';
+            content.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/nlp/preprocess', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: textToAnalyze,
+                        remove_stopwords: true,
+                        lemmatization: true,
+                        is_code: (mode === 'comments')
+                    })
+                });
+
+                if (!res.ok) throw new Error('NLP processing failed');
+                const data = await res.json();
+
+                document.getElementById('modalRawTokens').innerText = data.original_token_count || 0;
+                document.getElementById('modalFilteredTokens').innerText = data.processed_token_count || 0;
+                document.getElementById('modalStopwords').innerText = data.stopwords_removed || 0;
+                document.getElementById('modalDiversity').innerText = data.lexical_diversity || '0.0';
+
+                const kwContainer = document.getElementById('modalKeywords');
+                kwContainer.innerHTML = '';
+                if (data.keywords && data.keywords.length > 0) {
+                    data.keywords.forEach(kw => {
+                        const tag = document.createElement('span');
+                        tag.className = 'nlp-tag';
+                        tag.innerHTML = `${kw.word} <span class="nlp-tag-count">(${kw.count})</span>`;
+                        kwContainer.appendChild(tag);
+                    });
+                } else {
+                    kwContainer.innerHTML = '<span style="font-size: 0.75rem; color: var(--text-secondary);">No prominent keywords detected</span>';
+                }
+
+                const tokensContainer = document.getElementById('modalTokensPreview');
+                tokensContainer.innerText = data.tokens && data.tokens.length > 0 
+                    ? data.tokens.join(', ') 
+                    : '(No tokens remaining)';
+
+                loading.style.display = 'none';
+                content.style.display = 'flex';
+            } catch (err) {
+                loading.style.display = 'none';
+                alert('NLP error: ' + err.message);
+            }
+        }
+    </script>
 
     <!-- Page Specific Scripts -->
     {% block scripts %}{% endblock %}

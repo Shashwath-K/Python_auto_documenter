@@ -27,6 +27,13 @@
                 <option value="medium" selected>Docs: Medium (50% density)</option>
                 <option value="maximum">Docs: High (100% density)</option>
             </select>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                <input type="checkbox" id="nlpCleanToggle" checked style="accent-color: var(--accent-primary);">
+                <span>NLTK Clean</span>
+            </label>
+            <button id="openNlpModalBtn" onclick="openNlpInspector()" class="btn-secondary" style="padding: 0.5rem 0.85rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;" title="Open NLTK Preprocessing Inspector">
+                <span>🔬 NLP Inspect</span>
+            </button>
             <button id="downloadBtn" onclick="downloadFile()" class="btn-primary"
                 style="display: none; background-color: var(--success); padding: 0.5rem 1rem;">Download File</button>
             <div id="genDocGroup"
@@ -275,7 +282,8 @@
                             language: langId,
                             doc_level: docLevel,
                             full_replace: item.full_replace || false,
-                            is_markdown_cell: item.is_markdown_cell || false
+                            is_markdown_cell: item.is_markdown_cell || false,
+                            clean_with_nltk: document.getElementById('nlpCleanToggle')?.checked || false
                         })
                     });
 
@@ -414,7 +422,8 @@
                     language: currentUploadedLang,
                     filename: baseName,
                     format: format,
-                    template: template
+                    template: template,
+                    apply_nlp_preprocessing: document.getElementById('nlpEnrichSummaryToggle')?.checked ?? true
                 })
             });
 

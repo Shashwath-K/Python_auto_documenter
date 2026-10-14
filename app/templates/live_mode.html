@@ -32,6 +32,11 @@
                 <option value="markdown">Markdown</option>
                 <option value="plaintext">Text</option>
             </select>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                <input type="checkbox" id="nlpCleanToggle" checked style="accent-color: var(--accent-primary);">
+                <span>NLTK Clean</span>
+            </label>
+            <button id="openNlpModalBtn" onclick="openNlpInspector()" class="btn-run btn-run-visible" style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.5rem 0.85rem;" title="Open NLTK Preprocessing Inspector">🔬 NLP Inspect</button>
             <button id="pauseBtn" onclick="togglePause()" class="btn-run btn-run-visible"
                 style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">Pause
                 Auto-Doc</button>
@@ -209,7 +214,8 @@
                             is_inline: item.is_inline || false,
                             language: currentLang,
                             doc_level: docLevel,
-                            full_replace: item.full_replace || false
+                            full_replace: item.full_replace || false,
+                            clean_with_nltk: document.getElementById('nlpCleanToggle')?.checked || false
                         })
                     });
 
@@ -487,6 +493,102 @@
             explanationContent.style.color = "var(--danger)";
         } finally {
             loadingIndicator.style.display = 'none';
+        }
+    }
+
+    // Enable AI Summary button when code exists in Live Editor
+    function updateAiSummaryAvailability() {
+        const btn = document.getElementById('aiSummaryBtn');
+        const hint = document.getElementById('aiSummaryHint');
+        if (editor && editor.getValue().trim().length > 0) {
+            if (btn) btn.disabled = false;
+            if (hint) hint.style.display = 'none';
+        } else {
+            if (btn) btn.disabled = true;
+            if (hint) hint.style.display = 'block';
+        }
+    }
+
+    if (typeof editor !== 'undefined' && editor) {
+        editor.onDidChangeModelContent(updateAiSummaryAvailability);
+        updateAiSummaryAvailability();
+    } else {
+        setTimeout(updateAiSummaryAvailability, 1000);
+    }
+
+    async function generateAiSummary() {
+        if (!editor) return;
+        const code = editor.getValue();
+        if (!code || !code.trim()) {
+            alert('No code in the editor. Please write or paste code first.');
+            return;
+        }
+
+        const format = document.getElementById('aiSummaryFormat')?.value || 'PDF';
+        const template = document.getElementById('aiSummaryTemplate')?.value || 'Classic';
+        const btn = document.getElementById('aiSummaryBtn');
+        const btnText = document.getElementById('aiSummaryBtnText');
+        const statusEl = document.getElementById('aiSummaryStatus');
+
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add('loading');
+        }
+        if (btnText) btnText.innerText = 'Generating...';
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.className = 'ai-summary-status-box';
+            statusEl.innerText = 'Generating your expert AI report...';
+        }
+
+        const currentLang = editor.getModel() ? editor.getModel().getLanguageId() : 'python';
+        const applyNlp = document.getElementById('nlpEnrichSummaryToggle')?.checked ?? true;
+
+        try {
+            const res = await fetch('/api/generate-ai-summary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: code,
+                    language: currentLang,
+                    filename: 'live_editor_code',
+                    format: format,
+                    template: template,
+                    apply_nlp_preprocessing: applyNlp
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Generation failed.');
+            }
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `live_editor_summary.${format.toLowerCase() === 'docx' ? 'docx' : 'pdf'}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            if (statusEl) {
+                statusEl.className = 'ai-summary-status-box success';
+                statusEl.innerText = '✓ Report downloaded successfully!';
+            }
+        } catch (err) {
+            console.error('AI Summary error:', err);
+            if (statusEl) {
+                statusEl.className = 'ai-summary-status-box error';
+                statusEl.innerText = 'Generation failed: ' + err.message;
+            }
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
+            if (btnText) btnText.innerText = 'Generate Report';
         }
     }
 </script>
