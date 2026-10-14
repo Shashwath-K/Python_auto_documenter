@@ -16,3 +16,4 @@ beautifulsoup4>=4.12.0
 markdown-it-py>=3.0.0
 pygments>=2.15.0
 nltk>=3.8.1
+python-multipart>=0.0.9
