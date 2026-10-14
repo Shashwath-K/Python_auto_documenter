@@ -21,10 +21,11 @@
                 <div class="brand-icon">◈</div>
                 <h1 class="app-title">SemanticFlow</h1>
             </a>
-            <nav class="header-nav">
+            <nav class="header-nav" style="align-items: center;">
                 <a href="/live-mode" class="nav-link">Live Mode</a>
                 <a href="/upload-mode" class="nav-link">File Upload</a>
                 <a href="/repo-mode" class="nav-link">Repo Scan</a>
+                <span class="nlp-badge" style="cursor: pointer;" onclick="document.getElementById('sidebarWrapper')?.classList.remove('collapsed');document.querySelector('.layout-body')?.classList.remove('sidebar-collapsed');" title="NLTK Preprocessing Pipeline Active - Click to view in sidebar">NLTK Active</span>
             </nav>
         </div>
     </header>

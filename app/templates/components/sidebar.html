@@ -60,6 +60,63 @@
             </div>
         </div>
 
+        <div class="sidebar-widget nlp-widget">
+            <div class="widget-header">
+                <h3 class="widget-title">NLP Preprocessing</h3>
+                <span class="nlp-badge" id="nlpStatusBadge">NLTK Active</span>
+            </div>
+            <div class="card widget-card nlp-card glass-card">
+                <p class="nlp-description">Tokenize, filter stopwords, and extract domain vocabulary using NLTK.</p>
+
+                <div class="nlp-toggles">
+                    <label class="nlp-switch-row">
+                        <span class="switch-label">Stopword Filter</span>
+                        <input type="checkbox" id="nlpStopwordsToggle" checked class="nlp-toggle-input">
+                    </label>
+                    <label class="nlp-switch-row">
+                        <span class="switch-label">WordNet Lemmatization</span>
+                        <input type="checkbox" id="nlpLemmatizeToggle" checked class="nlp-toggle-input">
+                    </label>
+                    <label class="nlp-switch-row">
+                        <span class="switch-label">Porter Stemmer</span>
+                        <input type="checkbox" id="nlpStemmingToggle" class="nlp-toggle-input">
+                    </label>
+                    <label class="nlp-switch-row">
+                        <span class="switch-label">Enrich AI Summary</span>
+                        <input type="checkbox" id="nlpEnrichSummaryToggle" checked class="nlp-toggle-input">
+                    </label>
+                </div>
+
+                <button id="runNlpAnalysisBtn" class="nlp-action-btn premium-btn" onclick="runNlpAnalysis()">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                        <path d="M4 6h16M4 12h16M4 18h7"></path>
+                    </svg>
+                    <span id="runNlpBtnText">Preprocess Text</span>
+                </button>
+
+                <div id="nlpResultsBox" class="nlp-results-box" style="display:none;">
+                    <div class="nlp-stat-grid">
+                        <div class="nlp-stat-item">
+                            <span class="nlp-stat-val" id="nlpTokensCount">0</span>
+                            <span class="nlp-stat-label">Tokens</span>
+                        </div>
+                        <div class="nlp-stat-item">
+                            <span class="nlp-stat-val" id="nlpStopwordsCount">0</span>
+                            <span class="nlp-stat-label">Stopwords</span>
+                        </div>
+                        <div class="nlp-stat-item">
+                            <span class="nlp-stat-val" id="nlpDiversityVal">0.0</span>
+                            <span class="nlp-stat-label">Diversity</span>
+                        </div>
+                    </div>
+                    <div class="nlp-keywords-wrapper">
+                        <span class="nlp-subheading">Extracted Keywords</span>
+                        <div id="nlpKeywordsTags" class="nlp-tags-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% block sidebar_extra %}{% endblock %}
 
         <div class="sidebar-widget ai-assistant-widget">
@@ -102,4 +159,67 @@
         const icon = document.querySelector('.sidebar-toggle-icon');
         icon.innerText = isCollapsed ? '◀' : '▶';
     });
+
+    async function runNlpAnalysis() {
+        let textToAnalyze = "";
+        if (typeof editor !== 'undefined' && editor && typeof editor.getValue === 'function') {
+            textToAnalyze = editor.getValue();
+        }
+        if (!textToAnalyze || !textToAnalyze.trim()) {
+            alert('Please load or type some text or code into the editor first.');
+            return;
+        }
+
+        const btn = document.getElementById('runNlpAnalysisBtn');
+        const btnText = document.getElementById('runNlpBtnText');
+        const resultsBox = document.getElementById('nlpResultsBox');
+        const removeStopwords = document.getElementById('nlpStopwordsToggle')?.checked ?? true;
+        const lemmatization = document.getElementById('nlpLemmatizeToggle')?.checked ?? true;
+        const stemming = document.getElementById('nlpStemmingToggle')?.checked ?? false;
+
+        btn.disabled = true;
+        btnText.innerText = 'Analyzing...';
+
+        try {
+            const res = await fetch('/api/nlp/preprocess', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: textToAnalyze,
+                    remove_stopwords: removeStopwords,
+                    lemmatization: lemmatization,
+                    stemming: stemming,
+                    is_code: true
+                })
+            });
+
+            if (!res.ok) throw new Error('Analysis request failed');
+            const data = await res.json();
+
+            document.getElementById('nlpTokensCount').innerText = data.original_token_count || 0;
+            document.getElementById('nlpStopwordsCount').innerText = data.stopwords_removed || 0;
+            document.getElementById('nlpDiversityVal').innerText = data.lexical_diversity || '0.0';
+
+            const tagsContainer = document.getElementById('nlpKeywordsTags');
+            tagsContainer.innerHTML = '';
+            if (data.keywords && data.keywords.length > 0) {
+                data.keywords.forEach(kw => {
+                    const tag = document.createElement('span');
+                    tag.className = 'nlp-tag';
+                    tag.innerHTML = `${kw.word}<span class="nlp-tag-count">(${kw.count})</span>`;
+                    tagsContainer.appendChild(tag);
+                });
+            } else {
+                tagsContainer.innerHTML = '<span style="font-size: 0.7rem; color: var(--text-secondary);">No prominent keywords</span>';
+            }
+
+            resultsBox.style.display = 'flex';
+        } catch (err) {
+            console.error('NLP Preprocessing error:', err);
+            alert('Error running NLP preprocessing: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btnText.innerText = 'Preprocess Text';
+        }
+    }
 </script>
