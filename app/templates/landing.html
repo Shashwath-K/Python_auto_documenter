@@ -89,58 +89,149 @@
         </div>
     </section>
 
+    <!-- End-to-End Workflow Pipeline -->
+    <section class="workflow-section">
+        <p class="section-eyebrow">Architecture in Motion</p>
+        <h2 class="section-heading">How SemanticFlow Works</h2>
+        <p class="section-subtext">Four coordinated layers bridge AST parsing, lexical processing, and local LLM heuristics.</p>
+        
+        <div class="pipeline-grid">
+            <div class="pipeline-card">
+                <span class="pipeline-badge">Phase 01</span>
+                <div class="pipeline-title">Deterministic AST</div>
+                <p class="pipeline-desc">Scans source files with language-specific AST visitors. Pinpoints exact insertion lines and calculates indentation without rewriting code.</p>
+            </div>
+            <div class="pipeline-card">
+                <span class="pipeline-badge">Phase 02</span>
+                <div class="pipeline-title">NLTK Preprocessing</div>
+                <p class="pipeline-desc">Filters stopword clutter, tokenizes sentences, and computes WordNet lemmas to optimize context window efficiency.</p>
+            </div>
+            <div class="pipeline-card">
+                <span class="pipeline-badge">Phase 03</span>
+                <div class="pipeline-title">Local LLM Heuristic</div>
+                <p class="pipeline-desc">Queries Llama 3.2 via Ollama locally. Produces PEP 257 compliant docstrings and multi-factor complexity scores.</p>
+            </div>
+            <div class="pipeline-card">
+                <span class="pipeline-badge">Phase 04</span>
+                <div class="pipeline-title">Multi-Format Delivery</div>
+                <p class="pipeline-desc">Outputs directly into your editor with RPA ghost-typing, creates Git diffs, or exports publication-quality PDF & DOCX reports.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Feature Showcase with Visual Artifacts -->
     <div class="feature-flow">
         <article class="feature-item">
             <div class="feature-content">
-                <h3>Live Intelligence</h3>
-                <p>Experience real-time code analysis that breathes life into your source files. Our live editor identifies documentation gaps, suggests improvements, and generates precise technical descriptions as you work.</p>
-                <div style="margin-top: 1.5rem;">
-                    <a href="/live-mode" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Explore Live Mode</a>
+                <span class="badge-tag accent" style="margin-bottom: 0.75rem;">Live Ghost Typing</span>
+                <h3>Real-Time Live Intelligence</h3>
+                <p>Experience real-time code analysis that breathes life into your source files. Our Monaco-powered editor monitors typing cadence, identifies documentation gaps, suggests improvements, and generates precise technical descriptions as you write.</p>
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <a href="/live-mode" class="btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Launch Live Mode</a>
+                    <a href="/documentation#live-mode-guide" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">View Guide</a>
                 </div>
             </div>
             <div class="feature-visual">
-                <!-- Visual touch: Subtle glowing icon or abstract shape -->
-                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3;">◈</div>
+                <img src="/images/live_mode.png" alt="Live Generation Mode Screenshot" class="feature-img" onerror="this.onerror=null; this.src='/images/landing_page.png';">
             </div>
         </article>
 
         <article class="feature-item">
             <div class="feature-content">
-                <h3>Precision Conversion</h3>
-                <p>Transform technical snippets or entire files across formats with semantic awareness. Preserve context and meaning while leveraging local LLM nodes for rule-driven, traceable output.</p>
-                <div style="margin-top: 1.5rem;">
-                    <a href="/upload-mode" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Try Uploads</a>
+                <span class="badge-tag cyan" style="margin-bottom: 0.75rem;">Multi-Language & Jupyter</span>
+                <h3>Precision File & Notebook Conversion</h3>
+                <p>Transform technical files or entire Jupyter Notebooks (<code>.ipynb</code>) with semantic awareness. Preserve original code logic while leveraging local LLM nodes for rule-driven, traceable docstrings and native PDF/DOCX compilations.</p>
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <a href="/upload-mode" class="btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Upload File</a>
+                    <a href="/documentation#file-convert-guide" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Conversion Docs</a>
                 </div>
             </div>
             <div class="feature-visual">
-                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3; color: var(--accent-secondary);">✦</div>
+                <img src="/images/upload_mode.png" alt="Upload Mode Screenshot" class="feature-img" onerror="this.onerror=null; this.src='/images/landing_page.png';">
             </div>
         </article>
 
         <article class="feature-item">
             <div class="feature-content">
-                <h3>Project Scanning</h3>
-                <p>Map out entire repositories to identify "dark spots" in your documentation. Generate comprehensive project overviews, changelogs, and design notes automatically.</p>
-                <p style="color: var(--accent-primary); font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">Currently in Preview</p>
+                <span class="badge-tag success" style="margin-bottom: 0.75rem;">Batch Git Automation</span>
+                <h3>Repository Deep Scanner</h3>
+                <p>Map out entire software repositories to identify dark spots in your documentation. Inspect real-time Git Diffs with color-coded additions, and export pristine documented zip archives with clean Git histories.</p>
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <a href="/repo-mode" class="btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Scan Repository</a>
+                    <a href="/documentation#repo-scan-guide" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Repo Docs</a>
+                </div>
             </div>
             <div class="feature-visual">
-                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3;">⚓</div>
+                <img src="/images/repo_mode.png" alt="Repository Mode Screenshot" class="feature-img" onerror="this.onerror=null; this.src='/images/landing_page.png';">
             </div>
         </article>
 
         <article class="feature-item">
             <div class="feature-content">
-                <h3>NLP & Text Preprocessing</h3>
+                <span class="badge-tag cyan" style="margin-bottom: 0.75rem;">NLTK NLP Pipeline</span>
+                <h3>Lexical Preprocessing & WordNet</h3>
                 <p>Equipped with an integrated NLTK pipeline: tokenize sentences and words, filter noisy stopwords, perform WordNet lemmatization and Porter stemming, and distill high-value domain vocabulary to enhance document clarity and AI summaries.</p>
-                <div style="margin-top: 1.5rem;">
-                    <a href="/upload-mode" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Launch with NLTK</a>
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <button onclick="openNlpInspector()" class="btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Open NLP Inspector</button>
+                    <a href="/documentation#nlp-pipeline" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.875rem;">Read NLP Specs</a>
                 </div>
             </div>
             <div class="feature-visual">
-                <div class="brand-icon" style="font-size: 5rem; opacity: 0.3; color: #38bdf8;">🔬</div>
+                <div style="display: flex; flex-direction: column; gap: 1rem; padding: 2rem; width: 100%; box-sizing: border-box;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <span class="nlp-tag" style="font-size: 0.85rem; padding: 4px 10px;">Tokenization (Punkt)</span>
+                        <span class="nlp-tag" style="font-size: 0.85rem; padding: 4px 10px;">Stopwords (English)</span>
+                        <span class="nlp-tag" style="font-size: 0.85rem; padding: 4px 10px;">Lemmatizer (WordNet)</span>
+                        <span class="nlp-tag" style="font-size: 0.85rem; padding: 4px 10px;">Type-Token Ratio</span>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 0.8rem; color: #a5b4fc;">
+                        ✓ Token reduction: 42% noise filtered<br>
+                        ✓ TTR Diversity: 0.684 (Rich vocabulary)<br>
+                        ✓ Morphological roots grounded to WordNet
+                    </div>
+                </div>
             </div>
         </article>
     </div>
+
+    <!-- Tech Stack Grid -->
+    <section class="tech-stack-section">
+        <p class="section-eyebrow">Enterprise Foundations</p>
+        <h2 class="section-heading">Built on Proven Local Technologies</h2>
+        <p class="section-subtext">Zero external API dependencies. Fast, private, and deterministic.</p>
+        <div class="tech-grid">
+            <div class="tech-card">
+                <span class="tech-icon">⚡</span>
+                <span class="tech-name">FastAPI</span>
+                <span class="tech-role">Async Core Backend</span>
+            </div>
+            <div class="tech-card">
+                <span class="tech-icon">🦙</span>
+                <span class="tech-name">Ollama</span>
+                <span class="tech-role">Local LLM Inference</span>
+            </div>
+            <div class="tech-card">
+                <span class="tech-icon">🔬</span>
+                <span class="tech-name">NLTK</span>
+                <span class="tech-role">Lexical Preprocessing</span>
+            </div>
+            <div class="tech-card">
+                <span class="tech-icon">💻</span>
+                <span class="tech-name">Monaco</span>
+                <span class="tech-role">VS Code Editor Engine</span>
+            </div>
+            <div class="tech-card">
+                <span class="tech-icon">📑</span>
+                <span class="tech-name">ReportLab</span>
+                <span class="tech-role">Native PDF Engine</span>
+            </div>
+            <div class="tech-card">
+                <span class="tech-icon">🌳</span>
+                <span class="tech-name">Python AST</span>
+                <span class="tech-role">Syntax Tree Analysis</span>
+            </div>
+        </div>
+    </section>
 
     <section style="margin-top: 8rem; text-align: center; padding-bottom: 4rem;">
         <p style="font-size: 0.875rem; color: var(--text-secondary);">Infrastructure powered by Ollama managed nodes. All data remains local.</p>
