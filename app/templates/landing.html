@@ -9,12 +9,83 @@
     <div class="hero-visual-anchor"></div>
     
     <section class="hero-section">
-        <p class="hero-eyebrow">Local-first automation</p>
-        <h1>Crafting documentation with semantic intelligence.</h1>
-        <p>A professional-grade engine for live analysis, seamless file conversions, and repository-scale documentation—all running securely on your local hardware.</p>
+        <div class="hero-announcement">
+            <span class="chip-dot"></span>
+            <span>Local AI Engine v1.4 with NLTK Text Preprocessing</span>
+        </div>
+        <h1>Transform Undocumented Code into <span class="gradient-text">Semantic Masterpieces</span></h1>
+        <p>A deterministic AST parsing engine, PEP 257 docstring generator, and NLTK-driven lexical pipeline—running 100% locally on your hardware with Ollama.</p>
         <div class="hero-actions">
-            <a class="btn-primary" href="/live-mode">Launch Live Mode</a>
-            <a class="btn-secondary" href="/upload-mode">Upload a File</a>
+            <a class="btn-primary" href="/live-mode">Launch Live Editor</a>
+            <a class="btn-secondary" href="/upload-mode">File & Jupyter Convert</a>
+            <a class="btn-secondary" href="/repo-mode">Scan Repository</a>
+            <a class="btn-secondary" href="/documentation">Explore Docs</a>
+        </div>
+
+        <!-- Interactive Hero Code Comparison Showcase -->
+        <div class="hero-code-demo">
+            <div class="hero-window-bar">
+                <div class="window-dots">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                </div>
+                <div class="window-tabs">
+                    <button class="demo-tab-btn active" id="tabDocumented" onclick="switchDemoTab('documented')">AutoDoc + NLTK Output</button>
+                    <button class="demo-tab-btn" id="tabRaw" onclick="switchDemoTab('raw')">Raw Undocumented Python</button>
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">main_pipeline.py</div>
+            </div>
+
+            <!-- Code Pane 1: Documented -->
+            <pre class="hero-code-pane" id="paneDocumented"><code><span class="code-keyword">def</span> <span class="code-fn">calculate_lexical_diversity</span>(text: str, remove_stopwords: bool = <span class="code-keyword">True</span>) -> dict:
+    <span class="code-docstring">"""
+    Computes lexical diversity (Type-Token Ratio) and extracts domain keywords using NLTK.
+
+    Args:
+        text (str): Source text or docstrings to analyze.
+        remove_stopwords (bool): Whether to filter high-frequency noise words.
+
+    Returns:
+        dict: Analytics payload containing token counts, TTR score, and lemma frequencies.
+    """</span>
+    <span class="code-comment"># NLTK Tokenization & Stopword filtration</span>
+    tokens = [t.lower() <span class="code-keyword">for</span> t <span class="code-keyword">in</span> tokenize_words(text)]
+    <span class="code-keyword">if</span> remove_stopwords:
+        tokens = filter_stopwords(tokens)
+    
+    unique_tokens = <span class="code-fn">set</span>(tokens)
+    ttr = <span class="code-fn">round</span>(<span class="code-fn">len</span>(unique_tokens) / <span class="code-fn">max</span>(<span class="code-fn">len</span>(tokens), 1), 3)
+    <span class="code-keyword">return</span> {"ttr": ttr, "tokens": tokens, "vocab_size": <span class="code-fn">len</span>(unique_tokens)}</code></pre>
+
+            <!-- Code Pane 2: Raw -->
+            <pre class="hero-code-pane" id="paneRaw" style="display: none;"><code><span class="code-keyword">def</span> <span class="code-fn">calculate_lexical_diversity</span>(text: str, remove_stopwords: bool = <span class="code-keyword">True</span>) -> dict:
+    tokens = [t.lower() <span class="code-keyword">for</span> t <span class="code-keyword">in</span> tokenize_words(text)]
+    <span class="code-keyword">if</span> remove_stopwords:
+        tokens = filter_stopwords(tokens)
+    unique_tokens = <span class="code-fn">set</span>(tokens)
+    ttr = <span class="code-fn">round</span>(<span class="code-fn">len</span>(unique_tokens) / <span class="code-fn">max</span>(<span class="code-fn">len</span>(tokens), 1), 3)
+    <span class="code-keyword">return</span> {"ttr": ttr, "tokens": tokens, "vocab_size": <span class="code-fn">len</span>(unique_tokens)}</code></pre>
+        </div>
+
+        <!-- Stats Metric Strip -->
+        <div class="stats-metric-strip">
+            <div class="metric-item">
+                <span class="metric-value">100%</span>
+                <span class="metric-label">Local & Private</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-value">&lt;50ms</span>
+                <span class="metric-label">AST Parse Latency</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-value">9+</span>
+                <span class="metric-label">Languages & Formats</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-value">PEP 257</span>
+                <span class="metric-label">Compliant Standard</span>
+            </div>
         </div>
     </section>
 
@@ -81,8 +152,27 @@
 <!-- Landing page uses a full-width layout -->
 {% endblock %}
 
-{% block scripts %}
 <script>
+    // Hero Interactive Code Tab Switcher
+    function switchDemoTab(tab) {
+        const btnDoc = document.getElementById('tabDocumented');
+        const btnRaw = document.getElementById('tabRaw');
+        const paneDoc = document.getElementById('paneDocumented');
+        const paneRaw = document.getElementById('paneRaw');
+
+        if (tab === 'documented') {
+            btnDoc.classList.add('active');
+            btnRaw.classList.remove('active');
+            paneDoc.style.display = 'block';
+            paneRaw.style.display = 'none';
+        } else {
+            btnRaw.classList.add('active');
+            btnDoc.classList.remove('active');
+            paneRaw.style.display = 'block';
+            paneDoc.style.display = 'none';
+        }
+    }
+
     // Subtle parallax or entrance animations could be added here
     document.addEventListener('DOMContentLoaded', () => {
         const items = document.querySelectorAll('.feature-item');
@@ -104,3 +194,4 @@
     });
 </script>
 {% endblock %}
+
