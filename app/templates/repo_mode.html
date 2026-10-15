@@ -56,27 +56,44 @@
 {% endblock %}
 
 {% block content %}
-<a href="/" class="back-link">Back to Home</a>
-<h1>Repository Mode</h1>
+<div class="page-header-row">
+    <div class="breadcrumb-nav">
+        <a href="/" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Repository Deep Scanner</span>
+    </div>
+    <div class="page-header-actions">
+        <a href="/documentation#repo-scan-guide" class="doc-badge-link" target="_blank" title="View Repository Scanner Guide">📖 Mode Guide</a>
+    </div>
+</div>
+
+<div class="page-title-group">
+    <h1 class="page-main-heading">Repository Deep Scanner</h1>
+    <p class="page-main-subtext">Scan multi-file archives, identify undocumented modules, review Git diff additions, and export documented project bundles.</p>
+</div>
 
 <div class="card repo-dashboard">
     <!-- UI Step 1: Upload -->
     <div id="step-upload" style="display: block;">
-        <h3>Upload Repository (.zip)</h3>
-        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
-            Upload a full Git repository as a .zip file. This engine will safely extract it, scan for code files
-            recursively,
-            and deploy LLM workers to generate documentation across the entire codebase.
-        </p>
-
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <button onclick="document.getElementById('repoFileInput').click()" class="btn-primary">Upload .zip</button>
-            <select id="repoDocLevel" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
-                <option value="minimum">Docs: Low (30% density)</option>
-                <option value="medium" selected>Docs: Medium (50% density)</option>
-                <option value="maximum">Docs: High (100% density)</option>
-            </select>
+        <div class="unified-toolbar" style="margin-bottom: 1.5rem;">
+            <div class="toolbar-status-badge">
+                <span class="toolbar-status-dot"></span>
+                <span>Scanner Idle</span>
+            </div>
+            <div class="toolbar-actions">
+                <button onclick="document.getElementById('repoFileInput').click()" class="toolbar-btn-action toolbar-btn-primary">
+                    <span>📦 Upload Repository (.zip)</span>
+                </button>
+                <select id="repoDocLevel" class="toolbar-select">
+                    <option value="minimum">Docs: Low (30%)</option>
+                    <option value="medium" selected>Docs: Medium (50%)</option>
+                    <option value="maximum">Docs: High (100%)</option>
+                </select>
+            </div>
         </div>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.6;">
+            Upload a full Git repository as a <code>.zip</code> archive. The engine safely extracts the tree, maps all Python syntax trees recursively, and coordinates local Ollama LLM workers to generate docstrings while preserving your revision history.
+        </p>
         <input type="file" id="repoFileInput" accept=".zip" style="display: none;">
     </div>
 

@@ -8,40 +8,50 @@
 {% endblock %}
 
 {% block content %}
-<a href="/" class="back-link">Back to Home</a>
-<h1>Upload & Analyze</h1>
+<div class="page-header-row">
+    <div class="breadcrumb-nav">
+        <a href="/" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">File & Notebook Convert</span>
+    </div>
+    <div class="page-header-actions">
+        <a href="/documentation#file-convert-guide" class="doc-badge-link" target="_blank" title="View File Conversion Guide">📖 Mode Guide</a>
+    </div>
+</div>
+
+<div class="page-title-group">
+    <h1 class="page-main-heading">File & Notebook Conversion</h1>
+    <p class="page-main-subtext">Upload single files or Jupyter Notebooks (<code>.ipynb</code>) for deterministic AST docstrings, NLTK preprocessing, and PDF/DOCX manual generation.</p>
+</div>
 
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <div class="status" id="serverStatus">Server Online</div>
-    </div>
-    <p>Waiting for hotkey triggers from the client listener (Ctrl+Alt+D), or upload a supported file directly below.</p>
+    <div class="unified-toolbar">
+        <div class="toolbar-status-badge" id="serverStatusBadge">
+            <span class="toolbar-status-dot"></span>
+            <span id="serverStatus">Server Online</span>
+        </div>
 
-    <hr>
-
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-            <button onclick="document.getElementById('fileInput').click()" class="btn-primary">Upload File</button>
-            <select id="docLevelSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
-                <option value="minimum">Docs: Low (30% density)</option>
-                <option value="medium" selected>Docs: Medium (50% density)</option>
-                <option value="maximum">Docs: High (100% density)</option>
+        <div class="toolbar-actions">
+            <button onclick="document.getElementById('fileInput').click()" class="toolbar-btn-action toolbar-btn-primary">
+                <span>📁 Upload File / Notebook</span>
+            </button>
+            <select id="docLevelSelect" class="toolbar-select">
+                <option value="minimum">Docs: Low (30%)</option>
+                <option value="medium" selected>Docs: Medium (50%)</option>
+                <option value="maximum">Docs: High (100%)</option>
             </select>
-            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+            <label class="toolbar-toggle-label">
                 <input type="checkbox" id="nlpCleanToggle" checked style="accent-color: var(--accent-primary);">
                 <span>NLTK Clean</span>
             </label>
-            <button id="openNlpModalBtn" onclick="openNlpInspector()" class="btn-secondary" style="padding: 0.5rem 0.85rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;" title="Open NLTK Preprocessing Inspector">
+            <button id="openNlpModalBtn" onclick="openNlpInspector()" class="toolbar-btn-action" title="Open NLTK Preprocessing Inspector">
                 <span>🔬 NLP Inspect</span>
             </button>
-            <button id="downloadBtn" onclick="downloadFile()" class="btn-primary"
-                style="display: none; background-color: var(--success); padding: 0.5rem 1rem;">Download File</button>
-            <div id="genDocGroup"
-                style="display: none; gap: 0.5rem; border-left: 1px solid var(--border-color); padding-left: 1rem; margin-left: 0.5rem; align-items: center;">
-                <span style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);">Advanced
-                    Options:</span>
-                <select id="docTemplateSelect" class="modal-input"
-                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+            <button id="downloadBtn" onclick="downloadFile()" class="toolbar-btn-action toolbar-btn-success" style="display: none;">
+                <span>⬇ Download File</span>
+            </button>
+            <div id="genDocGroup" style="display: none; gap: 0.5rem; align-items: center; border-left: 1px solid var(--border-color); padding-left: 0.75rem;">
+                <select id="docTemplateSelect" class="toolbar-select">
                     <option value="Classic">Classic Template</option>
                     <option value="Modern">Modern Template</option>
                     <option value="Executive">Executive</option>
@@ -49,13 +59,11 @@
                     <option value="Creative">Creative</option>
                     <option value="Minimalist">Minimalist</option>
                 </select>
-                <select id="docFormatSelect" class="modal-input"
-                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                <select id="docFormatSelect" class="toolbar-select">
                     <option value="PDF">PDF</option>
                     <option value="DOCX">DOCX</option>
                 </select>
-                <button id="genDocBtn" onclick="generateDocument()" class="btn-primary"
-                    style="background-color: var(--success); padding: 0.5rem 1rem;">Download</button>
+                <button id="genDocBtn" onclick="generateDocument()" class="toolbar-btn-action toolbar-btn-success">Download Manual</button>
             </div>
         </div>
     </div>

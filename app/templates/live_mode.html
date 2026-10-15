@@ -7,20 +7,36 @@
 {% endblock %}
 
 {% block content %}
-<a href="/" class="back-link">Back to Home</a>
-<h1>Live Generation Editor</h1>
+<div class="page-header-row">
+    <div class="breadcrumb-nav">
+        <a href="/" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">Live Generation Editor</span>
+    </div>
+    <div class="page-header-actions">
+        <a href="/documentation#live-mode-guide" class="doc-badge-link" target="_blank" title="View Live Editor Guide">📖 Mode Guide</a>
+    </div>
+</div>
+
+<div class="page-title-group">
+    <h1 class="page-main-heading">Live Generation Editor</h1>
+    <p class="page-main-subtext">Monaco editor with real-time AST gap analysis, NLTK text normalization, and local Ollama streaming ghost-typing.</p>
+</div>
 
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <div class="status" id="serverStatus">Editor Ready</div>
-        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
-            <select id="docLevelSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
-                <option value="minimum">Docs: Low (30% density)</option>
-                <option value="medium" selected>Docs: Medium (50% density)</option>
-                <option value="maximum">Docs: High (100% density)</option>
+    <div class="unified-toolbar">
+        <div class="toolbar-status-badge" id="editorStatusBadge">
+            <span class="toolbar-status-dot"></span>
+            <span id="serverStatus">Editor Ready</span>
+        </div>
+
+        <div class="toolbar-actions">
+            <select id="docLevelSelect" class="toolbar-select">
+                <option value="minimum">Docs: Low (30%)</option>
+                <option value="medium" selected>Docs: Medium (50%)</option>
+                <option value="maximum">Docs: High (100%)</option>
             </select>
-            <select id="langSelect" class="modal-input" style="width: auto; padding: 0.5rem; font-size: 0.875rem;"
-                onchange="updateEditorLanguage()">
+            <select id="langSelect" class="toolbar-select" onchange="updateEditorLanguage()">
                 <option value="python" selected>Python</option>
                 <option value="javascript">JavaScript</option>
                 <option value="typescript">TypeScript (.ts)</option>
@@ -32,21 +48,21 @@
                 <option value="markdown">Markdown</option>
                 <option value="plaintext">Text</option>
             </select>
-            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; user-select: none;">
+            <label class="toolbar-toggle-label">
                 <input type="checkbox" id="nlpCleanToggle" checked style="accent-color: var(--accent-primary);">
                 <span>NLTK Clean</span>
             </label>
-            <button id="openNlpModalBtn" onclick="openNlpInspector()" class="btn-run btn-run-visible" style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.5rem 0.85rem;" title="Open NLTK Preprocessing Inspector">🔬 NLP Inspect</button>
-            <button id="pauseBtn" onclick="togglePause()" class="btn-run btn-run-visible"
-                style="background-color: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);">Pause
-                Auto-Doc</button>
-            <button id="runCodeBtn" onclick="runCode()" class="btn-run btn-run-visible">Run Code</button>
-            <div id="genDocGroup"
-                style="display: none; gap: 0.5rem; border-left: 1px solid var(--border-color); padding-left: 1rem; margin-left: 0.5rem; align-items: center;">
-                <span style="font-size: 0.8rem; font-weight: bold; color: var(--text-secondary);">Advanced
-                    Options:</span>
-                <select id="docTemplateSelect" class="modal-input"
-                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+            <button id="openNlpModalBtn" onclick="openNlpInspector()" class="toolbar-btn-action" title="Open NLTK Preprocessing Inspector">
+                <span>🔬 NLP Inspect</span>
+            </button>
+            <button id="pauseBtn" onclick="togglePause()" class="toolbar-btn-action">
+                <span>⏸ Pause Auto-Doc</span>
+            </button>
+            <button id="runCodeBtn" onclick="runCode()" class="toolbar-btn-action toolbar-btn-primary">
+                <span>▶ Run Code</span>
+            </button>
+            <div id="genDocGroup" style="display: none; gap: 0.5rem; align-items: center; border-left: 1px solid var(--border-color); padding-left: 0.75rem;">
+                <select id="docTemplateSelect" class="toolbar-select">
                     <option value="Classic">Classic Template</option>
                     <option value="Modern">Modern Template</option>
                     <option value="Executive">Executive</option>
@@ -54,20 +70,15 @@
                     <option value="Creative">Creative</option>
                     <option value="Minimalist">Minimalist</option>
                 </select>
-                <select id="docFormatSelect" class="modal-input"
-                    style="width: auto; padding: 0.5rem; font-size: 0.875rem;">
+                <select id="docFormatSelect" class="toolbar-select">
                     <option value="PDF">PDF</option>
                     <option value="DOCX">DOCX</option>
                 </select>
-                <button id="genDocBtn" onclick="generateDocument()" class="btn-run btn-run-visible"
-                    style="background-color: var(--success); padding: 0.5rem 1rem;">Download</button>
-                <button id="downloadSourceBtn" onclick="downloadSourceCode()" class="btn-run btn-run-visible"
-                    style="background-color: var(--accent-primary); padding: 0.5rem 1rem;">Download Source</button>
+                <button id="genDocBtn" onclick="generateDocument()" class="toolbar-btn-action toolbar-btn-success">Download Manual</button>
+                <button id="downloadSourceBtn" onclick="downloadSourceCode()" class="toolbar-btn-action toolbar-btn-primary">Download Source</button>
             </div>
         </div>
     </div>
-    <p style="margin-top: 0;">Type your Python code below. When you pause typing, the system will automatically analyze
-        what you wrote and generate docstrings.</p>
     <div id="editorContainer" class="editor-container editor-container-visible">
     </div>
 </div>
