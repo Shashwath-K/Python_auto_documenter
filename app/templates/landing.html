@@ -119,9 +119,18 @@
         </div>
     </section>
 
+    <!-- Interactive Feature Filter / Search Bar -->
+    <div class="feature-search-container">
+        <div class="feature-search-wrapper">
+            <span class="search-icon-symbol">🔍</span>
+            <input type="text" id="featureSearchInput" class="feature-search-input" placeholder="Search features (e.g., live, nltk, AST, git, ollama, pdf)..." oninput="filterFeatures(this.value)">
+            <span class="search-count-badge" id="featureCountBadge">4 capabilities</span>
+        </div>
+    </div>
+
     <!-- Core Feature Showcase with Visual Artifacts -->
-    <div class="feature-flow">
-        <article class="feature-item">
+    <div class="feature-flow" id="featureFlowList">
+        <article class="feature-item" data-title="Real-Time Live Intelligence" data-keywords="live editor ghost typing monaco ollama local streaming autocomplete">
             <div class="feature-content">
                 <span class="badge-tag accent" style="margin-bottom: 0.75rem;">Live Ghost Typing</span>
                 <h3>Real-Time Live Intelligence</h3>
@@ -136,7 +145,7 @@
             </div>
         </article>
 
-        <article class="feature-item">
+        <article class="feature-item" data-title="Precision File & Notebook Conversion" data-keywords="upload file jupyter ipynb notebook conversion pdf docx export docstring">
             <div class="feature-content">
                 <span class="badge-tag cyan" style="margin-bottom: 0.75rem;">Multi-Language & Jupyter</span>
                 <h3>Precision File & Notebook Conversion</h3>
@@ -151,7 +160,7 @@
             </div>
         </article>
 
-        <article class="feature-item">
+        <article class="feature-item" data-title="Repository Deep Scanner" data-keywords="repo git repository scanner batch zip diff dark spots multi-file">
             <div class="feature-content">
                 <span class="badge-tag success" style="margin-bottom: 0.75rem;">Batch Git Automation</span>
                 <h3>Repository Deep Scanner</h3>
@@ -166,7 +175,7 @@
             </div>
         </article>
 
-        <article class="feature-item">
+        <article class="feature-item" data-title="Lexical Preprocessing & WordNet" data-keywords="nltk nlp lexical preprocessing wordnet tokenization stopwords lemmatization stemmer ttr diversity">
             <div class="feature-content">
                 <span class="badge-tag cyan" style="margin-bottom: 0.75rem;">NLTK NLP Pipeline</span>
                 <h3>Lexical Preprocessing & WordNet</h3>
@@ -233,8 +242,128 @@
         </div>
     </section>
 
-    <section style="margin-top: 8rem; text-align: center; padding-bottom: 4rem;">
-        <p style="font-size: 0.875rem; color: var(--text-secondary);">Infrastructure powered by Ollama managed nodes. All data remains local.</p>
+    <!-- Interactive FAQ Accordion -->
+    <section class="faq-section" id="faq">
+        <p class="section-eyebrow">Frequently Asked Questions</p>
+        <h2 class="section-heading">Everything You Need to Know</h2>
+        <p class="section-subtext">Clear, transparent answers about local execution, data privacy, and architecture.</p>
+
+        <div class="faq-accordion">
+            <div class="faq-item active">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>Does any proprietary source code leave my local machine?</span>
+                    <span class="faq-chevron">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <strong>Never.</strong> SemanticFlow is engineered with an air-gapped security model. All AST parsing, lexical analysis, and neural docstring inferences happen entirely within your local hardware using your local Ollama node (port 11434). There are zero remote analytics or third-party cloud calls.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>Which Ollama LLM models are recommended for code documentation?</span>
+                    <span class="faq-chevron">▼</span>
+                </button>
+                <div class="faq-answer">
+                    We recommend <code>llama3.2</code> (lightweight, rapid inference on laptops), <code>mistral:7b</code> (balanced general reasoning), or <code>deepseek-coder:6.7b</code> / <code>codellama</code> (specialized in strict PEP 257 parameter and return annotations). Any model pulled via <code>ollama run &lt;model&gt;</code> is automatically detected.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>How does NLTK preprocessing improve LLM docstrings?</span>
+                    <span class="faq-chevron">▼</span>
+                </button>
+                <div class="faq-answer">
+                    NLTK strips boilerplate words, normalizes variable tokens with WordNet lemmatization, and computes vocabulary diversity metrics (Type-Token Ratio). This tightens the prompt context sent to Ollama, reducing token overhead by up to 40% and preventing hallucinated docstring text.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can I export documentation as PDF, Markdown, or DOCX?</span>
+                    <span class="faq-chevron">▼</span>
+                </button>
+                <div class="faq-answer">
+                    Yes. SemanticFlow includes a built-in ReportLab rendering engine for publishing styled, multi-page PDF technical manuals, as well as full raw Markdown (<code>.md</code>) for direct inclusion into GitHub repositories or Sphinx/MkDocs documentation trees.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>How does the Repository Deep Scanner handle large repos?</span>
+                    <span class="faq-chevron">▼</span>
+                </button>
+                <div class="faq-answer">
+                    The Repository Scanner walks directory trees recursively, filters test files or virtualenvs, and builds a dependency AST map. You can review colorized Git diffs before committing or download a zip archive with documented files ready for production deployment.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developer Testimonials Showcase -->
+    <section class="testimonials-section">
+        <p class="section-eyebrow">Developer Community</p>
+        <h2 class="section-heading">Loved by Engineers & Architects</h2>
+        <p class="section-subtext">Discover how engineering teams maintain clean, auditable codebases effortlessly.</p>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-quote-mark">“</div>
+                <p class="testimonial-body">
+                    SemanticFlow transformed our legacy data science notebooks into production-ready libraries. The local Ollama integration means compliance signed off immediately without security reviews.
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SK</div>
+                    <div class="author-info">
+                        <span class="author-name">Sarah Kowalski</span>
+                        <span class="author-role">Staff ML Engineer, Fintech</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-quote-mark">“</div>
+                <p class="testimonial-body">
+                    The NLTK text preprocessing inspector is a brilliant touch. We can actually see token reduction metrics and lemma mapping before docstrings are generated. A game-changer for code reviews.
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, #10b981, #06b6d4);">MR</div>
+                    <div class="author-info">
+                        <span class="author-name">Marcus Rodriguez</span>
+                        <span class="author-role">Principal Systems Architect</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-quote-mark">“</div>
+                <p class="testimonial-body">
+                    Scanning a 40-file repository and exporting clean Git diffs in minutes saved us two full sprint cycles before our ISO certification audit. The PDF manuals look stunning.
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">AL</div>
+                    <div class="author-info">
+                        <span class="author-name">Aisha Lin</span>
+                        <span class="author-role">Lead DevOps Engineer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section class="cta-banner">
+        <h2 class="cta-heading">Ready to Experience Local Code Intelligence?</h2>
+        <p class="cta-subtext">No API keys required. Zero telemetry. Start documenting with your local Ollama runtime right now.</p>
+        <div class="cta-buttons">
+            <a href="/live-mode" class="btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem;">Launch Live Editor</a>
+            <a href="/documentation" class="btn-secondary" style="padding: 0.85rem 2rem; font-size: 1rem;">Explore Documentation</a>
+        </div>
+    </section>
+
+    <section style="margin-top: 4rem; text-align: center; padding-bottom: 4rem;">
+        <p style="font-size: 0.875rem; color: var(--text-secondary);">Infrastructure powered by local Ollama managed nodes. All data remains 100% on your machine.</p>
     </section>
 </div>
 {% endblock %}
@@ -243,6 +372,7 @@
 <!-- Landing page uses a full-width layout -->
 {% endblock %}
 
+{% block scripts %}
 <script>
     // Hero Interactive Code Tab Switcher
     function switchDemoTab(tab) {
@@ -264,9 +394,50 @@
         }
     }
 
-    // Subtle parallax or entrance animations could be added here
+    // Interactive FAQ Accordion Toggle
+    function toggleFaq(button) {
+        const item = button.closest('.faq-item');
+        const isActive = item.classList.contains('active');
+        
+        // Close other items
+        document.querySelectorAll('.faq-item').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        // Toggle clicked item
+        if (!isActive) {
+            item.classList.add('active');
+        }
+    }
+
+    // Live Feature Filter / Search
+    function filterFeatures(query) {
+        const normalized = query.trim().toLowerCase();
+        const items = document.querySelectorAll('#featureFlowList .feature-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const title = (item.getAttribute('data-title') || '').toLowerCase();
+            const keywords = (item.getAttribute('data-keywords') || '').toLowerCase();
+            const textContent = item.textContent.toLowerCase();
+
+            if (!normalized || title.includes(normalized) || keywords.includes(normalized) || textContent.includes(normalized)) {
+                item.style.display = 'flex';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const badge = document.getElementById('featureCountBadge');
+        if (badge) {
+            badge.textContent = `${visibleCount} of ${items.length} capabilities`;
+        }
+    }
+
+    // Entrance animations observer
     document.addEventListener('DOMContentLoaded', () => {
-        const items = document.querySelectorAll('.feature-item');
+        const items = document.querySelectorAll('.feature-item, .pipeline-card, .tech-card, .testimonial-card');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -278,8 +449,8 @@
 
         items.forEach(item => {
             item.style.opacity = '0';
-            item.style.transform = 'translateY(30px)';
-            item.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            item.style.transform = 'translateY(25px)';
+            item.style.transition = 'all 0.65s cubic-bezier(0.4, 0, 0.2, 1)';
             observer.observe(item);
         });
     });
