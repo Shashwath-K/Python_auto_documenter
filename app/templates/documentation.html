@@ -261,6 +261,30 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload</code></pre
                     <strong>Interactive Inspector:</strong> Press <kbd class="kbd-shortcut">Ctrl+K</kbd> anywhere in the application or click the <strong>NLP & NLTK</strong> header chip to inspect real-time metrics on the active editor contents.
                 </div>
             </div>
+
+            <h3>Direct Python API Example</h3>
+            <div class="code-block-wrapper">
+                <div class="code-block-header">
+                    <span>Python Example</span>
+                    <button class="copy-code-btn" onclick="copySnippet(this)">Copy</button>
+                </div>
+                <pre><code>from app.services.text_preprocessing import preprocessor
+
+# Preprocess raw technical code comments
+raw_comment = "Calculates matrix eigenvalues and vectors using QR decomposition iteratively."
+result = preprocessor.process(
+    text=raw_comment,
+    to_lower=True,
+    remove_stopwords=True,
+    lemmatization=True
+)
+
+print("Original Tokens:", result["original_token_count"])
+print("Stopwords Filtered:", result["stopwords_removed"])
+print("Lexical Diversity (TTR):", result["lexical_diversity"])
+print("Top Keywords:", result["keywords"])
+# Output: ['calculate', 'matrix', 'eigenvalue', 'vector', 'using', 'qr', 'decomposition', 'iteratively']</code></pre>
+            </div>
         </section>
 
         <!-- Section 5: Live Mode & Ghost Typing -->
