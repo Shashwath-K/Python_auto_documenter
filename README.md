@@ -211,5 +211,3 @@ For real-time insertion, `services/rpa_service.py` uses keyboard automation to "
 ## ![License](https://img.shields.io/badge/-License-blue?style=flat-square&logo=read-the-docs)
 
 Distributed under the Unlicense License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
