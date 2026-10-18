@@ -14,8 +14,12 @@
     <link rel="stylesheet" href="/static/css/components/cards.css">
     <link rel="stylesheet" href="/static/css/components/sidebar.css">
     <link rel="stylesheet" href="/static/css/components/docs.css">
+    <!-- Loading Screen CSS -->
+    <link rel="stylesheet" href="/static/css/loading.css">
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Anime.js for 3D animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     {% block extra_css %}{% endblock %}
 </head>
 
@@ -319,6 +323,9 @@
             });
         });
     </script>
+
+    <!-- Loading Screen Script -->
+    <script src="/static/js/loading.js"></script>
 
 
     <!-- Page Specific Scripts -->
