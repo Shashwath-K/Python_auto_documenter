@@ -11,12 +11,14 @@
     align-items: center;
     z-index: 9999;
     overflow: hidden;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .loading-container {
     width: 200px;
     height: 200px;
     perspective: 800px;
+    position: relative;
 }
 
 .cube {
@@ -43,3 +45,18 @@
 .top    { transform: rotateX(90deg) translateZ(100px); }
 .bottom { transform: rotateX(-90deg) translateZ(100px); }
 
+.loading-text {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #00f3ff;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+    pointer-events: none;
+}
