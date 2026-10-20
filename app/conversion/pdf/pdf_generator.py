@@ -13,9 +13,9 @@ from reportlab.lib.colors import lightgrey
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 
-from app.pdf_converter.templates.pdf_templates import PDF_TEMPLATES
-from app.pdf_converter.enums.templates import PDFTemplate
-from app.pdf_converter.analyzers.document_model import StructuredDocument
+from app.conversion.templates.pdf_templates import PDF_TEMPLATES
+from app.conversion.enums.templates import PDFTemplate
+from app.conversion.analyzers.document_model import StructuredDocument
 
 
 # -------------------------------------------------

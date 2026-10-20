@@ -1,5 +1,5 @@
 import os
-from app.pdf_converter.analyzers.document_model import StructuredDocument, DocBlock
+from app.conversion.analyzers.document_model import StructuredDocument, DocBlock
 
 
 def analyze_plaintext(content: str, file_path: str) -> StructuredDocument:

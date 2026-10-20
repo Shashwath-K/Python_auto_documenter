@@ -1,4 +1,4 @@
-from app.pdf_converter.enums.templates import PDFTemplate
+from app.conversion.enums.templates import PDFTemplate
 
 PDF_TEMPLATES = {
     PDFTemplate.CLASSIC: {

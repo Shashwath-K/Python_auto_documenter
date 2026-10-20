@@ -2,8 +2,8 @@ from docx import Document
 from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-from app.pdf_converter.analyzers.document_model import StructuredDocument
-from app.pdf_converter.enums.templates import PDFTemplate
+from app.conversion.analyzers.document_model import StructuredDocument
+from app.conversion.enums.templates import PDFTemplate
 
 def generate_docx(document: StructuredDocument, template: PDFTemplate, output_path: str):
     doc = Document()

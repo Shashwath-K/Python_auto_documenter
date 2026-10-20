@@ -9,7 +9,7 @@ from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn
 
-from app.pdf_converter.enums.templates import PDFTemplate
+from app.conversion.enums.templates import PDFTemplate
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -9,12 +9,12 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, 
     ListFlowable, ListItem, Image, Preformatted, KeepTogether, XPreformatted
 )
-from app.pdf_converter.utils.syntax_highlighter import highlight_code
+from app.conversion.utils.syntax_highlighter import highlight_code
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
 
-from app.pdf_converter.enums.templates import PDFTemplate
+from app.conversion.enums.templates import PDFTemplate
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

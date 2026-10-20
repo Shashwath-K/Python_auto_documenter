@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from app.pdf_converter.exceptions.custom_exceptions import ParsingError
+from app.conversion.exceptions.custom_exceptions import ParsingError
 
 def parse_html(file):
     """

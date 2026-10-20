@@ -1,9 +1,9 @@
 import os
 
-from app.pdf_converter.enums.file_types import SupportedFileType
-from app.pdf_converter.enums.error_codes import AppErrorCode
-from app.pdf_converter.exceptions.custom_exceptions import FileValidationError
-from app.pdf_converter.utils.constants import MAX_FILE_SIZE
+from app.conversion.enums.file_types import SupportedFileType
+from app.conversion.enums.error_codes import AppErrorCode
+from app.conversion.exceptions.custom_exceptions import FileValidationError
+from app.conversion.utils.constants import MAX_FILE_SIZE
 
 
 def validate_file(file):

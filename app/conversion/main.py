@@ -2,28 +2,28 @@ import os
 import tempfile
 import gradio as gr
 
-from app.pdf_converter.validators.file_validator import validate_file
-from app.pdf_converter.parsers.txt_parser import parse_txt
-from app.pdf_converter.parsers.md_parser import parse_md
-from app.pdf_converter.parsers.docx_parser import parse_docx
-from app.pdf_converter.parsers.bin_parser import parse_bin
-from app.pdf_converter.parsers.csv_parser import parse_csv
-from app.pdf_converter.parsers.html_parser import parse_html
-from app.pdf_converter.parsers.ipynb_parser import parse_ipynb
+from app.conversion.validators.file_validator import validate_file
+from app.conversion.parsers.txt_parser import parse_txt
+from app.conversion.parsers.md_parser import parse_md
+from app.conversion.parsers.docx_parser import parse_docx
+from app.conversion.parsers.bin_parser import parse_bin
+from app.conversion.parsers.csv_parser import parse_csv
+from app.conversion.parsers.html_parser import parse_html
+from app.conversion.parsers.ipynb_parser import parse_ipynb
 
-from app.pdf_converter.analyzers.content_analyzer import normalize_content
-from app.pdf_converter.analyzers.markdown_analyzer import analyze_markdown
-from app.pdf_converter.analyzers.plaintext_analyzer import analyze_plaintext
-from app.pdf_converter.analyzers.structure_scanner import scan_structure, bulletize_text
+from app.conversion.analyzers.content_analyzer import normalize_content
+from app.conversion.analyzers.markdown_analyzer import analyze_markdown
+from app.conversion.analyzers.plaintext_analyzer import analyze_plaintext
+from app.conversion.analyzers.structure_scanner import scan_structure, bulletize_text
 
-from app.pdf_converter.pdf.md_complete_conversion import convert_md_complete
-from app.pdf_converter.pdf.pdf_generator import generate_pdf
-from app.pdf_converter.docx.docx_generator import generate_docx
-from app.pdf_converter.docx.md_docx_converter import convert_md_to_docx
+from app.conversion.pdf.md_complete_conversion import convert_md_complete
+from app.conversion.pdf.pdf_generator import generate_pdf
+from app.conversion.docx.docx_generator import generate_docx
+from app.conversion.docx.md_docx_converter import convert_md_to_docx
 
-from app.pdf_converter.enums.templates import PDFTemplate
-from app.pdf_converter.enums.file_types import SupportedFileType
-from app.pdf_converter.exceptions.custom_exceptions import FileValidationError, ParsingError
+from app.conversion.enums.templates import PDFTemplate
+from app.conversion.enums.file_types import SupportedFileType
+from app.conversion.exceptions.custom_exceptions import FileValidationError, ParsingError
 
 def convert_file(file, template_choice, use_filename_as_heading, output_format="PDF", auto_structure=False, bulletize=False):
     try:

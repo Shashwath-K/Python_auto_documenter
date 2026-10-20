@@ -1,6 +1,6 @@
 import os
 import re
-from app.pdf_converter.analyzers.document_model import StructuredDocument, DocBlock
+from app.conversion.analyzers.document_model import StructuredDocument, DocBlock
 
 
 def convert_inline_markdown(text: str) -> str:

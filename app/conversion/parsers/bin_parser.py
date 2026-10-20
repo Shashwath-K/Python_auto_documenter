@@ -1,5 +1,5 @@
-from app.pdf_converter.exceptions.custom_exceptions import ParsingError
-from app.pdf_converter.enums.error_codes import AppErrorCode
+from app.conversion.exceptions.custom_exceptions import ParsingError
+from app.conversion.enums.error_codes import AppErrorCode
 
 
 def parse_bin(file):

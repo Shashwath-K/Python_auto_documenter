@@ -319,9 +319,9 @@ async def api_repo_commit(session_id: str, req: CommitRequest, background_tasks:
     )
 
 # --- NATIVE DOCUMENT GENERATION ENDPOINT ---
-from app.pdf_converter.enums.templates import PDFTemplate
-from app.pdf_converter.pdf.md_complete_conversion import convert_md_complete
-from app.pdf_converter.docx.md_docx_converter import convert_md_to_docx
+from app.conversion.enums.templates import PDFTemplate
+from app.conversion.pdf.md_complete_conversion import convert_md_complete
+from app.conversion.docx.md_docx_converter import convert_md_to_docx
 
 class GenerateDocumentRequest(BaseModel):
     code: str
@@ -340,7 +340,7 @@ async def api_generate_document(req: GenerateDocumentRequest, background_tasks: 
 
     if language == "ipynb" or req.filename.endswith(".ipynb"):
         import io
-        from app.pdf_converter.parsers.ipynb_parser import parse_ipynb
+        from app.conversion.parsers.ipynb_parser import parse_ipynb
         try:
             text_content = parse_ipynb(io.StringIO(req.code))
         except Exception:

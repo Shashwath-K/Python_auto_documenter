@@ -1,5 +1,5 @@
 import csv
-from app.pdf_converter.exceptions.custom_exceptions import ParsingError
+from app.conversion.exceptions.custom_exceptions import ParsingError
 
 def parse_csv(file):
     """

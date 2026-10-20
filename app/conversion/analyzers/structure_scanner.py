@@ -1,6 +1,6 @@
 import re
 import os
-from app.pdf_converter.analyzers.document_model import StructuredDocument, DocBlock
+from app.conversion.analyzers.document_model import StructuredDocument, DocBlock
 
 def scan_structure(content: str, file_path: str) -> StructuredDocument:
     filename = os.path.basename(file_path)
