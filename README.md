@@ -125,6 +125,22 @@ combine_auto_doc/
 
 ---
 
+## Current Runtime Layout
+
+The application code lives under `app/`; document generation is grouped in `app/conversion/`, and optional local utilities live in `scripts/`.
+
+```text
+app/
+├── api/            # FastAPI routes
+├── core/           # Configuration
+├── conversion/     # PDF and DOCX conversion pipeline
+├── services/       # LLM, parsing, Git, and RPA services
+├── static/         # CSS and JavaScript assets
+└── templates/      # Jinja templates
+scripts/
+└── listener.py     # Optional RPA hotkey listener
+```
+
 ## ![Quick Start](https://img.shields.io/badge/-Quick%20Start-green?style=flat-square&logo=rocket)
 
 ### Prerequisites
@@ -161,7 +177,7 @@ The application will be accessible at `http://127.0.0.1:8000`.
 
 ```bash
 # Start the background hotkey listener
-python client/listener.py
+python scripts/listener.py
 ```
 
 ---
@@ -204,7 +220,7 @@ The parsed code chunks are sent to the `llm_service.py`, which prompts the local
 For real-time insertion, `services/rpa_service.py` uses keyboard automation to "type" the generated docstrings directly into your source file without manual copy-pasting.
 
 ### Step 4 — Document Assembly
-`pdf_converter/` modules take the documented markdown or notebooks and render them into professional reports using distinct theme templates (Classic, Modern, etc.).
+`app/conversion/` modules take the documented markdown or notebooks and render them into professional reports using distinct theme templates (Classic, Modern, etc.).
 
 ---
 
