@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/static/css/components/docs.css">
     <!-- Loading Screen CSS -->
     <link rel="stylesheet" href="/static/css/loading.css">
+    <link rel="stylesheet" href="/static/css/redesign.css">
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Anime.js for 3D animations -->
@@ -42,7 +43,7 @@
         <div class="header-container">
             <a href="/" class="header-brand">
                 <div class="brand-icon-wrapper">
-                    <span class="brand-icon">◈</span>
+                    <svg class="brand-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13L16 2Z" stroke="currentColor" stroke-width="2"/><path d="m9 13 7 4 7-4M16 17v8" stroke="currentColor" stroke-width="2"/></svg>
                     <span class="brand-ping"></span>
                 </div>
                 <div class="brand-text-group">
@@ -98,7 +99,7 @@
         <div class="modal-content" style="max-width: 650px; max-height: 85vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.25rem;">🔬</span>
+                    <svg class="modal-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3v6.5l-4.5 8A2.3 2.3 0 0 0 6.5 21h11a2.3 2.3 0 0 0 2-3.5l-4.5-8V3M7 14h10M7 3h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">NLTK Text Preprocessing Inspector</h3>
                 </div>
                 <button onclick="closeNlpInspector()" class="icon-btn-small" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.25rem;">&times;</button>
@@ -160,7 +161,7 @@
             <div class="footer-top-grid">
                 <div class="footer-brand-col">
                     <div class="footer-brand">
-                        <span class="brand-icon">◈</span>
+                        <svg class="brand-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 2 29 9.5v13L16 30 3 22.5v-13L16 2Z" stroke="currentColor" stroke-width="2"/><path d="m9 13 7 4 7-4M16 17v8" stroke="currentColor" stroke-width="2"/></svg>
                         <span class="app-title">SemanticFlow</span>
                     </div>
                     <p class="footer-tagline">Semantic-aware source documentation, file conversion, and repo transformation running securely on your local Ollama runtime.</p>
@@ -327,6 +328,7 @@
 
     <!-- Loading Screen Script -->
     <script src="/static/js/loading.js"></script>
+    <script src="/static/js/redesign.js"></script>
 
 
     <!-- Page Specific Scripts -->
