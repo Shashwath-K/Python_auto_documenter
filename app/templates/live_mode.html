@@ -53,7 +53,7 @@
                 <span>NLTK Clean</span>
             </label>
             <button id="openNlpModalBtn" onclick="openNlpInspector()" class="toolbar-btn-action" title="Open NLTK Preprocessing Inspector">
-                <span>🔬 NLP Inspect</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3v6.5l-4.5 8A2.3 2.3 0 0 0 6.5 21h11a2.3 2.3 0 0 0 2-3.5l-4.5-8V3M7 14h10M7 3h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>NLP Inspect</span>
             </button>
             <button id="pauseBtn" onclick="togglePause()" class="toolbar-btn-action">
                 <span>⏸ Pause Auto-Doc</span>
@@ -257,16 +257,15 @@
 
                 // Update Sidebar Language UI
                 let printLangName = currentLang;
-                let iconEmoji = '💻';
-                if (currentLang === 'python') { printLangName = 'Python'; iconEmoji = '🐍'; }
-                else if (currentLang === 'javascript') { printLangName = 'JavaScript'; iconEmoji = '🟨'; }
-                else if (currentLang === 'cpp' || currentLang === 'c') { printLangName = 'C / C++'; iconEmoji = '⚙️'; }
-                else if (currentLang === 'java') { printLangName = 'Java'; iconEmoji = '☕'; }
-                else if (currentLang === 'markdown') { printLangName = 'Markdown'; iconEmoji = '📝'; }
-                else if (currentLang === 'plaintext') { printLangName = 'Text'; iconEmoji = '📄'; }
+                if (currentLang === 'python') { printLangName = 'Python'; }
+                else if (currentLang === 'javascript') { printLangName = 'JavaScript'; }
+                else if (currentLang === 'cpp' || currentLang === 'c') { printLangName = 'C / C++'; }
+                else if (currentLang === 'java') { printLangName = 'Java'; }
+                else if (currentLang === 'markdown') { printLangName = 'Markdown'; }
+                else if (currentLang === 'plaintext') { printLangName = 'Text'; }
 
                 document.getElementById('uiLanguageName').innerText = printLangName;
-                document.getElementById('uiLanguageIcon').innerText = iconEmoji;
+                document.getElementById('uiLanguageIcon').dataset.language = currentLang;
 
                 isGenerating = false; // Unlock
                 document.getElementById('serverStatus').innerText = "Generation Complete";
