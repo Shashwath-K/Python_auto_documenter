@@ -1,62 +1,14 @@
-/* Loading Screen Styles */
-#loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #0a0a0a; /* Dark background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    overflow: hidden;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.loading-container {
-    width: 200px;
-    height: 200px;
-    perspective: 800px;
-    position: relative;
-}
-
-.cube {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-}
-
-.face {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border: 2px solid #00f3ff;
-    box-sizing: border-box;
-    background: rgba(0, 243, 255, 0.1);
-    backdrop-filter: blur(5px);
-}
-
-.front  { transform: translateZ(100px); }
-.back   { transform: rotateY(180deg) translateZ(100px); }
-.right  { transform: rotateY(90deg) translateZ(100px); }
-.left   { transform: rotateY(-90deg) translateZ(100px); }
-.top    { transform: rotateX(90deg) translateZ(100px); }
-.bottom { transform: rotateX(-90deg) translateZ(100px); }
-
-.loading-text {
-    position: absolute;
-    bottom: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 1.5rem;
-    color: #00f3ff;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-    opacity: 1;
-    transition: opacity 1s ease-in-out;
-    pointer-events: none;
-}
+/* First-visit boot sequence: compact, editorial, and deliberately non-dashboard. */
+#loading-overlay { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; overflow:hidden; color:#e9e7df; background:#111315; opacity:1; visibility:visible; transition:opacity .42s cubic-bezier(.16,1,.3,1),visibility .42s ease; }
+#loading-overlay::before,#loading-overlay::after { position:absolute; content:""; pointer-events:none; }
+#loading-overlay::before { inset:0; opacity:.42; background-image:linear-gradient(rgba(233,231,223,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(233,231,223,.055) 1px,transparent 1px); background-size:42px 42px; mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent); }
+#loading-overlay::after { top:50%; left:50%; width:min(62vw,760px); height:1px; background:linear-gradient(90deg,transparent,rgba(200,242,58,.42),transparent); transform:translate(-50%,-50%); }
+html.skip-loader #loading-overlay,#loading-overlay.is-complete { opacity:0; visibility:hidden; pointer-events:none; }
+.loading-shell { position:relative; z-index:1; display:grid; grid-template-columns:92px minmax(220px,300px); align-items:center; gap:24px; transform:translateY(10px); }
+.loading-mark { position:relative; width:92px; height:92px; border:1px solid rgba(233,231,223,.22); transform:rotate(45deg); }
+.loading-mark::before,.loading-mark::after { position:absolute; content:""; background:#c8f23a; }
+.loading-mark::before { top:50%; left:-12px; width:114px; height:1px; opacity:.7; }.loading-mark::after { top:-12px; left:50%; width:1px; height:114px; opacity:.22; }
+.loading-orbit { position:absolute; inset:15px; border:1px solid rgba(255,112,88,.75); border-radius:50%; }.loading-orbit-a { transform:rotate(36deg) scaleX(.58); }.loading-orbit-b { transform:rotate(-36deg) scaleX(.58); border-color:rgba(108,157,255,.75); }.loading-core { position:absolute; inset:38px; background:#c8f23a; box-shadow:0 0 22px rgba(200,242,58,.52); }
+.loading-copy { display:grid; gap:10px; }.loading-kicker { color:#92958f; font:600 .58rem/1 "IBM Plex Mono",monospace; letter-spacing:.14em; text-transform:uppercase; }.loading-text { color:#e9e7df; font:600 clamp(1.55rem,3vw,2.1rem)/1 "Space Grotesk",sans-serif; letter-spacing:-.065em; }.loading-meter { height:2px; overflow:hidden; background:rgba(233,231,223,.16); }.loading-meter span { display:block; width:0; height:100%; background:#c8f23a; box-shadow:0 0 14px rgba(200,242,58,.7); }.loading-meta { display:flex; justify-content:space-between; color:#92958f; font:.62rem/1 "IBM Plex Mono",monospace; text-transform:uppercase; }#loading-percent { color:#c8f23a; }
+@media (max-width:560px) { .loading-shell { grid-template-columns:1fr; justify-items:center; width:min(280px,calc(100vw - 56px)); }.loading-copy { width:100%; } }
+@media (prefers-reduced-motion:reduce) { #loading-overlay { transition:none; }.loading-mark { transform:rotate(45deg); } }

@@ -17,6 +17,15 @@
     <!-- Loading Screen CSS -->
     <link rel="stylesheet" href="/static/css/loading.css">
     <link rel="stylesheet" href="/static/css/redesign.css">
+    <script>
+        try {
+            if (sessionStorage.getItem('semanticflow-loader-seen-v2') === '1') {
+                document.documentElement.classList.add('skip-loader');
+            }
+        } catch (error) {
+            // Storage can be unavailable in private or restricted browser contexts.
+        }
+    </script>
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Anime.js for 3D animations -->
@@ -25,18 +34,20 @@
 </head>
 
 <body>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <div class="loading-container">
-            <div class="cube">
-                <div class="face front"></div>
-                <div class="face back"></div>
-                <div class="face right"></div>
-                <div class="face left"></div>
-                <div class="face top"></div>
-                <div class="face bottom"></div>
+    <!-- First-visit boot sequence. Hidden after the first page in this browser tab. -->
+    <div id="loading-overlay" aria-hidden="true">
+        <div class="loading-shell">
+            <div class="loading-mark" aria-hidden="true">
+                <span class="loading-orbit loading-orbit-a"></span>
+                <span class="loading-orbit loading-orbit-b"></span>
+                <span class="loading-core"></span>
             </div>
-            <div class="loading-text">SemanticFlow</div>
+            <div class="loading-copy">
+                <span class="loading-kicker">Boot sequence / local runtime</span>
+                <strong class="loading-text">SemanticFlow</strong>
+                <div class="loading-meter" role="presentation"><span id="loading-progress"></span></div>
+                <div class="loading-meta"><span id="loading-status">Aligning signal</span><span id="loading-percent">00%</span></div>
+            </div>
         </div>
     </div>
     <header class="app-header">
