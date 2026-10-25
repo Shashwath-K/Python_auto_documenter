@@ -157,7 +157,7 @@
         
         // Update icon based on state
         const icon = document.querySelector('.sidebar-toggle-icon');
-        icon.innerText = isCollapsed ? '◀' : '▶';
+        icon.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
     });
 
     async function runNlpAnalysis() {
