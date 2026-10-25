@@ -63,13 +63,13 @@
         <span class="breadcrumb-current">Repository Deep Scanner</span>
     </div>
     <div class="page-header-actions">
-        <a href="/documentation#repo-scan-guide" class="doc-badge-link" target="_blank" title="View Repository Scanner Guide">📖 Mode Guide</a>
+        <a href="/documentation#repo-scan-guide" class="doc-badge-link" target="_blank" title="View Repository Scanner Guide">Mode guide</a>
     </div>
 </div>
 
 <div class="page-title-group">
     <h1 class="page-main-heading">Repository Deep Scanner</h1>
-    <p class="page-main-subtext">Scan multi-file archives, identify undocumented modules, review Git diff additions, and export documented project bundles.</p>
+    <p class="page-main-subtext">Upload a ZIP, review the generated diff, and export the documented bundle.</p>
 </div>
 
 <div class="card repo-dashboard">
@@ -82,7 +82,7 @@
             </div>
             <div class="toolbar-actions">
                 <button onclick="document.getElementById('repoFileInput').click()" class="toolbar-btn-action toolbar-btn-primary">
-                    <span>📦 Upload Repository (.zip)</span>
+                    <span>Upload repository (.zip)</span>
                 </button>
                 <select id="repoDocLevel" class="toolbar-select">
                     <option value="minimum">Docs: Low (30%)</option>
@@ -92,7 +92,7 @@
             </div>
         </div>
         <p style="margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.6;">
-            Upload a full Git repository as a <code>.zip</code> archive. The engine safely extracts the tree, maps all Python syntax trees recursively, and coordinates local Ollama LLM workers to generate docstrings while preserving your revision history.
+            Upload a repository ZIP. The scanner preserves the tree and prepares a reviewable diff.
         </p>
         <input type="file" id="repoFileInput" accept=".zip" style="display: none;">
     </div>

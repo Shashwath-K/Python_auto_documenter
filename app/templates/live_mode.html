@@ -14,13 +14,13 @@
         <span class="breadcrumb-current">Live Generation Editor</span>
     </div>
     <div class="page-header-actions">
-        <a href="/documentation#live-mode-guide" class="doc-badge-link" target="_blank" title="View Live Editor Guide">📖 Mode Guide</a>
+        <a href="/documentation#live-mode-guide" class="doc-badge-link" target="_blank" title="View Live Editor Guide">Mode guide</a>
     </div>
 </div>
 
 <div class="page-title-group">
     <h1 class="page-main-heading">Live Generation Editor</h1>
-    <p class="page-main-subtext">Monaco editor with real-time AST gap analysis, NLTK text normalization, and local Ollama streaming ghost-typing.</p>
+    <p class="page-main-subtext">Write code, generate missing docs, and review the result locally.</p>
 </div>
 
 <div class="card">
@@ -56,10 +56,10 @@
                 <svg class="btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3v6.5l-4.5 8A2.3 2.3 0 0 0 6.5 21h11a2.3 2.3 0 0 0 2-3.5l-4.5-8V3M7 14h10M7 3h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>NLP Inspect</span>
             </button>
             <button id="pauseBtn" onclick="togglePause()" class="toolbar-btn-action">
-                <span>⏸ Pause Auto-Doc</span>
+                <span>Pause auto-doc</span>
             </button>
             <button id="runCodeBtn" onclick="runCode()" class="toolbar-btn-action toolbar-btn-primary">
-                <span>▶ Run Code</span>
+                <span>Run code</span>
             </button>
             <div id="genDocGroup" style="display: none; gap: 0.5rem; align-items: center; border-left: 1px solid var(--border-color); padding-left: 0.75rem;">
                 <select id="docTemplateSelect" class="toolbar-select">
