@@ -1,497 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Documentation & Architecture Guide — SemanticFlow{% endblock %}
-
+{% block title %}SemanticFlow — Field notes{% endblock %}
 {% block layout_class %}no-sidebar docs-layout-container{% endblock %}
 
 {% block content %}
-<div class="docs-wrapper">
-    <!-- Sticky Docs Sidebar Navigation -->
+<div class="docs-wrapper docs-concise">
     <aside class="docs-sidebar">
         <div class="docs-sidebar-header">
-            <div class="docs-search-box">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                <input type="text" id="docsSearchInput" placeholder="Search documentation... (Ctrl+/)" autocomplete="off">
-            </div>
+            <div class="docs-search-box"><svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input type="text" id="docsSearchInput" placeholder="Find a note" autocomplete="off"></div>
         </div>
-
         <nav class="docs-toc" id="docsToc">
-            <div class="toc-group">
-                <span class="toc-group-title">Getting Started</span>
-                <a href="#quick-start" class="toc-link active" data-target="quick-start">
-                    <span class="toc-dot"></span>
-                    <span>Quick Start Guide</span>
-                </a>
-                <a href="#architecture" class="toc-link" data-target="architecture">
-                    <span class="toc-dot"></span>
-                    <span>Architecture & AST Engine</span>
-                </a>
-                <a href="#objectives" class="toc-link" data-target="objectives">
-                    <span class="toc-dot"></span>
-                    <span>Project Objectives</span>
-                </a>
-            </div>
-
-            <div class="toc-group">
-                <span class="toc-group-title">Core Capabilities</span>
-                <a href="#nlp-pipeline" class="toc-link" data-target="nlp-pipeline">
-                    <span class="toc-dot"></span>
-                    <span>NLTK Preprocessing Pipeline</span>
-                    <span class="toc-badge">New</span>
-                </a>
-                <a href="#live-mode-guide" class="toc-link" data-target="live-mode-guide">
-                    <span class="toc-dot"></span>
-                    <span>Live RPA & Ghost Typing</span>
-                </a>
-                <a href="#file-convert-guide" class="toc-link" data-target="file-convert-guide">
-                    <span class="toc-dot"></span>
-                    <span>File & Jupyter Notebooks</span>
-                </a>
-                <a href="#repo-scan-guide" class="toc-link" data-target="repo-scan-guide">
-                    <span class="toc-dot"></span>
-                    <span>Repo Scanner & Git Diffs</span>
-                </a>
-            </div>
-
-            <div class="toc-group">
-                <span class="toc-group-title">Export & Intelligence</span>
-                <a href="#ai-summaries-guide" class="toc-link" data-target="ai-summaries-guide">
-                    <span class="toc-dot"></span>
-                    <span>Native PDF & DOCX Reports</span>
-                </a>
-                <a href="#api-reference" class="toc-link" data-target="api-reference">
-                    <span class="toc-dot"></span>
-                    <span>REST API Reference</span>
-                </a>
-                <a href="#troubleshooting" class="toc-link" data-target="troubleshooting">
-                    <span class="toc-dot"></span>
-                    <span>Local Ollama & Setup</span>
-                </a>
-            </div>
+            <div class="toc-group"><span class="toc-group-title">Start</span><a href="#quick-start" class="toc-link active" data-target="quick-start"><span class="toc-dot"></span>Quick start</a><a href="#architecture" class="toc-link" data-target="architecture"><span class="toc-dot"></span>Workflow</a></div>
+            <div class="toc-group"><span class="toc-group-title">Surfaces</span><a href="#live-mode-guide" class="toc-link" data-target="live-mode-guide"><span class="toc-dot"></span>Live editor</a><a href="#file-convert-guide" class="toc-link" data-target="file-convert-guide"><span class="toc-dot"></span>File conversion</a><a href="#repo-scan-guide" class="toc-link" data-target="repo-scan-guide"><span class="toc-dot"></span>Repository scan</a></div>
+            <div class="toc-group"><span class="toc-group-title">Reference</span><a href="#nlp-pipeline" class="toc-link" data-target="nlp-pipeline"><span class="toc-dot"></span>NLP</a><a href="#api-reference" class="toc-link" data-target="api-reference"><span class="toc-dot"></span>API routes</a><a href="#troubleshooting" class="toc-link" data-target="troubleshooting"><span class="toc-dot"></span>Setup</a></div>
         </nav>
-
-        <div class="docs-sidebar-footer">
-            <div class="model-status-card">
-                <span class="status-indicator-dot online"></span>
-                <div class="model-info">
-                    <span class="model-name">{{ model_name }}</span>
-                    <span class="model-provider">Local-First Inference</span>
-                </div>
-            </div>
-        </div>
+        <div class="docs-sidebar-footer"><div class="model-status-card"><span class="status-indicator-dot online"></span><div class="model-info"><span class="model-name">{{ model_name }}</span><span class="model-provider">Local inference</span></div></div></div>
     </aside>
 
-    <!-- Main Documentation Content Pane -->
     <article class="docs-article" id="docsArticle">
-        <!-- Docs Header -->
-        <header class="docs-header-banner">
-            <div class="docs-breadcrumbs">
-                <a href="/">Home</a>
-                <span class="crumb-separator">/</span>
-                <span>Documentation</span>
-                <span class="crumb-separator">/</span>
-                <span class="current-crumb">Developer Guide</span>
-            </div>
-            <h1 class="docs-main-title">SemanticFlow Documentation</h1>
-            <p class="docs-lead-text">
-                Complete guide to local AI docstring generation, NLTK text preprocessing, format conversion, and repository-scale code intelligence.
-            </p>
-            <div class="docs-meta-row">
-                <span class="meta-item"><span class="badge-tag accent">v1.4.0</span></span>
-                <span class="meta-item">Updated: October 2026</span>
-                <span class="meta-item">Engine: Llama 3.2 3B via Ollama</span>
-                <span class="meta-item">License: Unlicense</span>
-            </div>
-        </header>
+        <header class="docs-header-banner"><div class="docs-breadcrumbs"><a href="/">Index</a><span class="crumb-separator">/</span><span class="current-crumb">Field notes</span></div><h1 class="docs-main-title">Use the workspace without the tour.</h1><p class="docs-lead-text">A short reference for running the local engine, choosing a surface, and finding the output.</p><div class="docs-meta-row"><span class="meta-item"><span class="badge-tag accent">v1.4</span></span><span class="meta-item">Local first</span><span class="meta-item">Ollama + FastAPI</span></div></header>
 
-        <!-- Section 1: Quick Start -->
-        <section class="docs-section" id="quick-start">
-            <div class="section-anchor-header">
-                <h2>Quick Start Guide</h2>
-                <a href="#quick-start" class="anchor-link">#</a>
-            </div>
-            <p>
-                SemanticFlow runs entirely on local consumer hardware. Code never leaves your workstation, guaranteeing absolute privacy for proprietary intellectual property and personal projects.
-            </p>
-
-            <div class="callout callout-tip">
-                    <svg class="callout-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18h6M10 21h4M8 14.5a6 6 0 1 1 8 0c-1 .8-1.5 1.7-1.5 3h-3c0-1.3-.5-2.2-1.5-3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                <div class="callout-body">
-                    <strong>Prerequisites:</strong> Python 3.10+, and a running <a href="https://ollama.com" target="_blank">Ollama</a> instance with the <code>llama3.2:3b</code> model pulled.
-                </div>
-            </div>
-
-            <h3>Installation in 3 Steps</h3>
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>Terminal / Bash</span>
-                    <button class="copy-code-btn" onclick="copySnippet(this)">Copy</button>
-                </div>
-                <pre><code># 1. Clone repository
-git clone https://github.com/Shashwath-K/Python_auto_documenter.git
-cd Python_auto_documenter
-
-# 2. Install dependencies (FastAPI, NLTK, ReportLab, etc.)
-pip install -r requirements.txt
-
-# 3. Pull recommended local model & launch server
+        <section class="docs-section" id="quick-start"><div class="section-anchor-header"><h2>Quick start</h2><a href="#quick-start" class="anchor-link">#</a></div><p>Install the dependencies, start Ollama, then launch the server.</p><div class="callout callout-tip"><strong>Needs:</strong> Python 3.10+ and an Ollama model such as <code>llama3.2:3b</code>.</div><div class="code-block-wrapper"><div class="code-block-header"><span>Terminal</span><button class="copy-code-btn" onclick="copySnippet(this)">Copy</button></div><pre><code>pip install -r requirements.txt
 ollama pull llama3.2:3b
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload</code></pre>
-            </div>
-            <p>Once started, visit <a href="http://127.0.0.1:8000" target="_blank">http://127.0.0.1:8000</a> to interact with the web workspace.</p>
-        </section>
+python -m uvicorn app.main:app --reload</code></pre></div><p>Open <a href="http://127.0.0.1:8000" target="_blank">127.0.0.1:8000</a>.</p></section>
 
-        <!-- Section 2: Architecture & AST Engine -->
-        <section class="docs-section" id="architecture">
-            <div class="section-anchor-header">
-                <h2>Architecture & AST Engine</h2>
-                <a href="#architecture" class="anchor-link">#</a>
-            </div>
-            <p>
-                Unlike generic LLM wrappers that overwrite files blindly, SemanticFlow uses a <strong>deterministic Abstract Syntax Tree (AST) parsing pipeline</strong> to extract function, class, and method boundaries with byte-precise line offsets.
-            </p>
+        <section class="docs-section" id="architecture"><div class="section-anchor-header"><h2>Workflow</h2><a href="#architecture" class="anchor-link">#</a></div><p>Every surface follows the same small pipeline:</p><div class="architecture-diagram-card compact-diagram"><div class="diagram-grid"><div class="diagram-step"><div class="step-num">01</div><div class="step-title">Parse</div><p class="step-desc">Find symbols and documentation gaps.</p></div><div class="diagram-step"><div class="step-num">02</div><div class="step-title">Prepare</div><p class="step-desc">Clean context with the NLP pass.</p></div><div class="diagram-step"><div class="step-num">03</div><div class="step-title">Generate</div><p class="step-desc">Ask the local Ollama model for output.</p></div><div class="diagram-step"><div class="step-num">04</div><div class="step-title">Export</div><p class="step-desc">Review, download, or commit the result.</p></div></div></div></section>
 
-            <div class="architecture-diagram-card">
-                <div class="diagram-grid">
-                    <div class="diagram-step">
-                        <div class="step-num">01</div>
-                        <div class="step-title">Source Ingestion</div>
-                        <p class="step-desc">Accepts Python, C++, Java, JS, TS, Markdown, and Jupyter Notebooks (<code>.ipynb</code>).</p>
-                    </div>
-                    <div class="diagram-arrow">➔</div>
-                    <div class="diagram-step">
-                        <div class="step-num">02</div>
-                        <div class="step-title">AST & Parser Service</div>
-                        <p class="step-desc">Extracts symbols, calculates indentation levels, and targets missing docstrings.</p>
-                    </div>
-                    <div class="diagram-arrow">➔</div>
-                    <div class="diagram-step">
-                        <div class="step-num">03</div>
-                        <div class="step-title">NLTK Preprocessor</div>
-                        <p class="step-desc">Tokenizes, removes stopwords, and normalizes vocabulary to optimize LLM attention.</p>
-                    </div>
-                    <div class="diagram-arrow">➔</div>
-                    <div class="diagram-step">
-                        <div class="step-num">04</div>
-                        <div class="step-title">Local LLM & Output</div>
-                        <p class="step-desc">Generates PEP 257 docstrings or produces styled PDF & DOCX executive summaries.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <section class="docs-section" id="nlp-pipeline"><div class="section-anchor-header"><h2>NLP</h2><a href="#nlp-pipeline" class="anchor-link">#</a></div><p>The inspector tokenizes text, removes stopwords, and can lemmatize or stem terms before analysis. Use it when a document needs a cleaner vocabulary signal.</p></section>
 
-        <!-- Section 3: Project Objectives -->
-        <section class="docs-section" id="objectives">
-            <div class="section-anchor-header">
-                <h2>Project Objectives</h2>
-                <a href="#objectives" class="anchor-link">#</a>
-            </div>
-            <p>The system was built around three primary development pillars:</p>
-            <div class="features-columns-grid">
-                <div class="feature-detail-card">
-                    <svg class="detail-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13.5 2-8 11h6l-1 9 8-11h-6l1-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-                    <h4>Objective 1: In-Place Automation</h4>
-                    <p>Deliver instantaneous docstrings directly into active IDEs via background RPA Ghost Typing or through Monaco Editor web tools.</p>
-                </div>
-                <div class="feature-detail-card">
-                    <span class="detail-icon">📦</span>
-                    <h4>Objective 2: Repository-Scale Scan</h4>
-                    <p>Process zipped multi-module repositories, generating clean Git branches and readable diffs without altering program logic.</p>
-                </div>
-                <div class="feature-detail-card">
-                    <svg class="detail-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.7"/><path d="M14 3v5h4M10 13h5M10 17h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                    <h4>Objective 3: Native Technical Reports</h4>
-                    <p>Compile source code and Jupyter notebooks into publication-ready PDF and DOCX reports featuring AI-authored learning pathways.</p>
-                </div>
-            </div>
-        </section>
+        <section class="docs-section" id="live-mode-guide"><div class="section-anchor-header"><h2>Live editor</h2><a href="#live-mode-guide" class="anchor-link">#</a></div><p>Paste or edit code, choose a documentation level, then run generation. The editor shows the result and terminal output in the same surface.</p><a class="doc-inline-link" href="/live-mode">Open live editor <span aria-hidden="true">→</span></a></section>
 
-        <!-- Section 4: NLTK Preprocessing Pipeline -->
-        <section class="docs-section" id="nlp-pipeline">
-            <div class="section-anchor-header">
-                <h2>NLTK Text Preprocessing Pipeline</h2>
-                <a href="#nlp-pipeline" class="anchor-link">#</a>
-            </div>
-            <p>
-                Integrated with the Natural Language Toolkit (NLTK), SemanticFlow includes a specialized NLP preprocessor designed for code comments, docstrings, and technical terminology.
-            </p>
+        <section class="docs-section" id="file-convert-guide"><div class="section-anchor-header"><h2>File conversion</h2><a href="#file-convert-guide" class="anchor-link">#</a></div><p>Upload a supported source file or notebook, review the preview, then choose PDF, DOCX, or source output.</p><a class="doc-inline-link" href="/upload-mode">Open converter <span aria-hidden="true">→</span></a></section>
 
-            <div class="table-container">
-                <table class="docs-table">
-                    <thead>
-                        <tr>
-                            <th>NLTK Component</th>
-                            <th>Algorithm / Corpus</th>
-                            <th>Primary Function in AutoDoc</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Word & Sent Tokenizer</strong></td>
-                            <td><code>punkt</code> & <code>punkt_tab</code></td>
-                            <td>Segment raw code comments into discrete lexical units and sentence boundaries.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Stopword Filtering</strong></td>
-                            <td>NLTK English Stopwords</td>
-                            <td>Eliminate high-frequency filler words (e.g. <em>the, is, at, which</em>) to highlight domain terms.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Morphology & Stemming</strong></td>
-                            <td>Porter Stemmer</td>
-                            <td>Reduces inflected tokens to root stems (e.g. <em>calculating, calculated → calcul</em>).</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Lemmatization</strong></td>
-                            <td>WordNet Lemmatizer</td>
-                            <td>Preserves morphological validity with vocabulary grounding (e.g. <em>matrices → matrix</em>).</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Lexical Diversity (TTR)</strong></td>
-                            <td>Type-Token Ratio Ratio</td>
-                            <td>Calculates vocabulary richness: <code>len(unique_tokens) / len(total_tokens)</code>.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <section class="docs-section" id="repo-scan-guide"><div class="section-anchor-header"><h2>Repository scan</h2><a href="#repo-scan-guide" class="anchor-link">#</a></div><p>Upload a ZIP, let the scanner map the tree, review the Git diff, and download the documented archive.</p><a class="doc-inline-link" href="/repo-mode">Open repository scanner <span aria-hidden="true">→</span></a></section>
 
-            <div class="callout callout-note">
-                <div class="callout-icon">ℹ️</div>
-                <div class="callout-body">
-                    <strong>Interactive Inspector:</strong> Press <kbd class="kbd-shortcut">Ctrl+K</kbd> anywhere in the application or click the <strong>NLP & NLTK</strong> header chip to inspect real-time metrics on the active editor contents.
-                </div>
-            </div>
+        <section class="docs-section" id="ai-summaries-guide"><div class="section-anchor-header"><h2>Reports</h2><a href="#ai-summaries-guide" class="anchor-link">#</a></div><p>Use the sidebar report action after loading content. Choose a template and export format; report generation stays local.</p></section>
 
-            <h3>Direct Python API Example</h3>
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>Python Example</span>
-                    <button class="copy-code-btn" onclick="copySnippet(this)">Copy</button>
-                </div>
-                <pre><code>from app.services.text_preprocessing import preprocessor
+        <section class="docs-section" id="api-reference"><div class="section-anchor-header"><h2>API routes</h2><a href="#api-reference" class="anchor-link">#</a></div><div class="table-container"><table class="docs-table"><thead><tr><th>Route</th><th>Purpose</th></tr></thead><tbody><tr><td><code>POST /api/generate-docstring</code></td><td>Generate documentation for a code unit.</td></tr><tr><td><code>POST /api/nlp/preprocess</code></td><td>Return token and vocabulary metrics.</td></tr><tr><td><code>POST /api/upload</code></td><td>Parse an uploaded file or notebook.</td></tr></tbody></table></div></section>
 
-# Preprocess raw technical code comments
-raw_comment = "Calculates matrix eigenvalues and vectors using QR decomposition iteratively."
-result = preprocessor.process(
-    text=raw_comment,
-    to_lower=True,
-    remove_stopwords=True,
-    lemmatization=True
-)
-
-print("Original Tokens:", result["original_token_count"])
-print("Stopwords Filtered:", result["stopwords_removed"])
-print("Lexical Diversity (TTR):", result["lexical_diversity"])
-print("Top Keywords:", result["keywords"])
-# Output: ['calculate', 'matrix', 'eigenvalue', 'vector', 'using', 'qr', 'decomposition', 'iteratively']</code></pre>
-            </div>
-        </section>
-
-        <!-- Section 5: Live Mode & Ghost Typing -->
-        <section class="docs-section" id="live-mode-guide">
-            <div class="section-anchor-header">
-                <h2>Live Mode & Ghost Typing</h2>
-                <a href="#live-mode-guide" class="anchor-link">#</a>
-            </div>
-            <p>
-                Live Mode provides an intelligent in-browser Monaco Editor that detects typing cadence. After you finish writing a function or class definition, the background daemon automatically analyzes intent and inserts formatted docstrings.
-            </p>
-            <ul>
-                <li><strong>Context Menus:</strong> Right-click any highlighted code block and click <em>Explain Code...</em> to ask questions.</li>
-                <li><strong>Configurable Density:</strong> Choose between Low (30%), Medium (50%), and High (100%) documentation density.</li>
-                <li><strong>Language Support:</strong> Python, JavaScript, TypeScript, JSX, C/C++, Java, HTML, CSS, and Markdown.</li>
-            </ul>
-        </section>
-
-        <!-- Section 6: File & Jupyter Conversion -->
-        <section class="docs-section" id="file-convert-guide">
-            <div class="section-anchor-header">
-                <h2>File & Jupyter Notebooks</h2>
-                <a href="#file-convert-guide" class="anchor-link">#</a>
-            </div>
-            <p>
-                In File Upload Mode, you can upload standalone files or entire Jupyter Notebooks (<code>.ipynb</code>). AutoDoc inspects both code cells and markdown cells:
-            </p>
-            <div class="code-block-wrapper">
-                <div class="code-block-header">
-                    <span>Jupyter Processing Logic</span>
-                </div>
-                <pre><code>// Notebook Cell Injection Pipeline
-1. Parse JSON structure preserving metadata & cell execution counts
-2. Target empty or undocumented code cells
-3. Query local LLM heuristic engine
-4. Re-inject docstring lines into cell source array
-5. Re-render live preview or trigger PDF/DOCX conversion</code></pre>
-            </div>
-        </section>
-
-        <!-- Section 7: Repo Scanner & Git Diffs -->
-        <section class="docs-section" id="repo-scan-guide">
-            <div class="section-anchor-header">
-                <h2>Repo Scanner & Git Diffs</h2>
-                <a href="#repo-scan-guide" class="anchor-link">#</a>
-            </div>
-            <p>
-                Repository Mode accepts a compressed <code>.zip</code> of any software project. It performs background extraction, scans for undocumented modules, injects documentation across files, and produces a real-time Git Diff viewer.
-            </p>
-            <p>
-                Once satisfied with the diff, click <strong>Commit & Download</strong> to obtain a pristine, fully documented copy with a personalized Git commit history.
-            </p>
-        </section>
-
-        <!-- Section 8: Native PDF & DOCX Reports -->
-        <section class="docs-section" id="ai-summaries-guide">
-            <div class="section-anchor-header">
-                <h2>Native PDF & DOCX Reports</h2>
-                <a href="#ai-summaries-guide" class="anchor-link">#</a>
-            </div>
-            <p>
-                SemanticFlow features a native ReportLab PDF generator and Python-docx publisher. Rather than basic HTML prints, documents are rendered with:
-            </p>
-            <div class="features-columns-grid">
-                <div class="feature-detail-card">
-                    <h4>6 Curated Color Schemes</h4>
-                    <p>Classic, Modern, Executive, Technical, Creative, and Minimalist styling with customized typography.</p>
-                </div>
-                <div class="feature-detail-card">
-                    <h4>AI Summary Inclusions</h4>
-                    <p>Automated complexity evaluation, progressive learning roadmaps, potential optimizations, and code quality scorecards.</p>
-                </div>
-                <div class="feature-detail-card">
-                    <h4>NLP Lexical Sections</h4>
-                    <p>Table of token metrics, stopword count, and prominent domain keywords extracted with NLTK.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 9: REST API Reference -->
-        <section class="docs-section" id="api-reference">
-            <div class="section-anchor-header">
-                <h2>REST API Reference</h2>
-                <a href="#api-reference" class="anchor-link">#</a>
-            </div>
-            <p>The backend exposes clean REST endpoints powered by FastAPI:</p>
-
-            <div class="api-endpoint-card">
-                <div class="api-endpoint-header">
-                    <span class="http-method post">POST</span>
-                    <span class="endpoint-path">/api/nlp/preprocess</span>
-                </div>
-                <p class="endpoint-desc">Applies NLTK tokenization, stopword filtering, and lemmatization to text or code comments.</p>
-                <div class="code-block-wrapper">
-                    <div class="code-block-header"><span>Request Payload</span></div>
-                    <pre><code>{
-  "text": "def calculate_velocity(distance, time): return distance / time",
-  "to_lower": true,
-  "remove_stopwords": true,
-  "lemmatization": true,
-  "is_code": true
-}</code></pre>
-                </div>
-            </div>
-
-            <div class="api-endpoint-card">
-                <div class="api-endpoint-header">
-                    <span class="http-method get">GET</span>
-                    <span class="endpoint-path">/api/nlp/options</span>
-                </div>
-                <p class="endpoint-desc">Returns available tokenizers, stemming models, and preprocessing filters.</p>
-            </div>
-
-            <div class="api-endpoint-card">
-                <div class="api-endpoint-header">
-                    <span class="http-method post">POST</span>
-                    <span class="endpoint-path">/api/generate-comment</span>
-                </div>
-                <p class="endpoint-desc">Generates PEP 257 compliant docstring or commented block using local Ollama.</p>
-            </div>
-
-            <div class="api-endpoint-card">
-                <div class="api-endpoint-header">
-                    <span class="http-method post">POST</span>
-                    <span class="endpoint-path">/api/generate-ai-summary</span>
-                </div>
-                <p class="endpoint-desc">Generates a comprehensive PDF or DOCX technical analysis report.</p>
-            </div>
-        </section>
-
-        <!-- Section 10: Troubleshooting & Setup -->
-        <section class="docs-section" id="troubleshooting">
-            <div class="section-anchor-header">
-                <h2>Local Ollama & Setup</h2>
-                <a href="#troubleshooting" class="anchor-link">#</a>
-            </div>
-            <p>Ensure your local Ollama daemon is active before running generation tasks:</p>
-            <div class="code-block-wrapper">
-                <div class="code-block-header"><span>Health Check</span></div>
-                <pre><code># Check if Ollama is running
-curl http://127.0.0.1:11434/api/tags
-
-# Ensure llama3.2 is installed
-ollama list</code></pre>
-            </div>
-            <p>To configure a custom model or port, modify <code>app/core/config.py</code> or specify environment variables in a <code>.env</code> file.</p>
-        </section>
+        <section class="docs-section" id="troubleshooting"><div class="section-anchor-header"><h2>Setup checks</h2><a href="#troubleshooting" class="anchor-link">#</a></div><p>If generation stalls, confirm Ollama is running and the selected model is installed. If a file is rejected, check its extension and size before retrying.</p></section>
     </article>
 </div>
 {% endblock %}
 
+{% block sidebar %}{% endblock %}
+
 {% block scripts %}
 <script>
-    // Copy code snippet helper
     function copySnippet(button) {
-        const pre = button.parentElement.nextElementSibling;
-        const code = pre ? pre.innerText : '';
-        navigator.clipboard.writeText(code).then(() => {
-            const originalText = button.innerText;
-            button.innerText = 'Copied!';
-            setTimeout(() => {
-                button.innerText = originalText;
-            }, 2000);
-        });
+        const code = button.closest('.code-block-wrapper').querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(() => { button.textContent = 'Copied'; window.setTimeout(() => { button.textContent = 'Copy'; }, 1200); });
     }
-
-    // ScrollSpy & Active TOC Tracking
     document.addEventListener('DOMContentLoaded', () => {
-        const sections = document.querySelectorAll('.docs-section');
-        const tocLinks = document.querySelectorAll('.docs-toc .toc-link');
-
-        function updateActiveToc() {
-            let currentActive = "";
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 120;
-                if (window.scrollY >= sectionTop) {
-                    currentActive = section.getAttribute('id');
-                }
-            });
-
-            tocLinks.forEach(link => {
-                if (link.getAttribute('data-target') === currentActive) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-        }
-
-        window.addEventListener('scroll', updateActiveToc, { passive: true });
-        updateActiveToc();
-
-        // In-docs live filter
-        const searchInput = document.getElementById('docsSearchInput');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                sections.forEach(section => {
-                    const text = section.innerText.toLowerCase();
-                    if (!query || text.includes(query)) {
-                        section.style.display = 'block';
-                    } else {
-                        section.style.display = 'none';
-                    }
-                });
-            });
-        }
+        const input = document.getElementById('docsSearchInput');
+        const sections = [...document.querySelectorAll('.docs-section')];
+        input?.addEventListener('input', () => {
+            const query = input.value.trim().toLowerCase();
+            sections.forEach(section => { section.hidden = Boolean(query) && !section.innerText.toLowerCase().includes(query); });
+        });
+        document.querySelectorAll('.toc-link').forEach(link => link.addEventListener('click', () => {
+            document.querySelectorAll('.toc-link').forEach(item => item.classList.remove('active'));
+            link.classList.add('active');
+        }));
     });
 </script>
 {% endblock %}
