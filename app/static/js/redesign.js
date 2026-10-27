@@ -9,7 +9,4 @@ document.addEventListener('DOMContentLoaded', () => {
         element.style.opacity = '1';
         element.style.transform = 'translateY(0)';
     }));
-    if (window.anime) {
-        anime({ targets: '.brand-ping', scale: [1, 1.8], opacity: [.9, .15], duration: 1500, easing: 'easeInOutSine', loop: true, direction: 'alternate' });
-    }
 });
