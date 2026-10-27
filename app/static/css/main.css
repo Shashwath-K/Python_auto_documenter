@@ -110,25 +110,6 @@ body {
     color: #a5b4fc;
 }
 
-.brand-ping {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--success);
-    box-shadow: 0 0 8px var(--success);
-    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes ping {
-    75%, 100% {
-        transform: scale(1.8);
-        opacity: 0;
-    }
-}
-
 .brand-text-group {
     display: flex;
     align-items: center;
